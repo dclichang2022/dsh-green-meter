@@ -17,29 +17,29 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var GreenMeterDock_module_css_default = {
-			"requestValue": "RQwx2G_requestValue",
-			"sep": "RQwx2G_sep",
-			"chartLabels": "RQwx2G_chartLabels",
+			"requestList": "RQwx2G_requestList",
+			"budget": "RQwx2G_budget",
+			"panelHead": "RQwx2G_panelHead",
+			"savingsValue": "RQwx2G_savingsValue",
 			"trigger": "RQwx2G_trigger",
 			"spark": "RQwx2G_spark",
-			"panelHead": "RQwx2G_panelHead",
-			"close": "RQwx2G_close",
-			"requestList": "RQwx2G_requestList",
-			"sidebarPanel": "RQwx2G_sidebarPanel",
-			"savings": "RQwx2G_savings",
-			"requestRows": "RQwx2G_requestRows",
-			"popoverPanel": "RQwx2G_popoverPanel",
-			"rows": "RQwx2G_rows",
-			"root": "RQwx2G_root",
-			"budget": "RQwx2G_budget",
-			"row": "RQwx2G_row",
+			"panelTitle": "RQwx2G_panelTitle",
 			"savingsTitle": "RQwx2G_savingsTitle",
-			"requestTitle": "RQwx2G_requestTitle",
-			"requestRow": "RQwx2G_requestRow",
-			"savingsValue": "RQwx2G_savingsValue",
-			"requestLabel": "RQwx2G_requestLabel",
 			"panelChart": "RQwx2G_panelChart",
-			"panelTitle": "RQwx2G_panelTitle"
+			"requestRow": "RQwx2G_requestRow",
+			"requestValue": "RQwx2G_requestValue",
+			"root": "RQwx2G_root",
+			"chartLabels": "RQwx2G_chartLabels",
+			"sep": "RQwx2G_sep",
+			"savings": "RQwx2G_savings",
+			"requestLabel": "RQwx2G_requestLabel",
+			"sidebarPanel": "RQwx2G_sidebarPanel",
+			"requestTitle": "RQwx2G_requestTitle",
+			"requestRows": "RQwx2G_requestRows",
+			"rows": "RQwx2G_rows",
+			"close": "RQwx2G_close",
+			"row": "RQwx2G_row",
+			"popoverPanel": "RQwx2G_popoverPanel"
 		};
 		//#endregion
 		//#region src/client/SidebarEnergyPanel.tsx
@@ -206,12 +206,12 @@ window.__ModuleLoader__.load({
 			return `${joules.toFixed(1)} J`;
 		}
 		/** One bar per turn, width 2px + 1px gap, normalized to the series max. */
-		function bars(turns, barWidth, gap, height) {
+		function bars(turns, barWidth, gap, height, offset) {
 			const max = Math.max(1, ...turns.map((turn) => turn.energyJ));
 			return turns.map((turn, index) => {
 				const h = Math.max(1, Math.round(turn.energyJ / max * height));
 				return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("rect", {
-					x: index * (barWidth + gap),
+					x: (offset + index) * (barWidth + gap),
 					y: height - h,
 					width: barWidth,
 					height: h,
@@ -219,19 +219,28 @@ window.__ModuleLoader__.load({
 				}, turn.turn);
 			});
 		}
-		/** Inline SVG per-turn energy bars; renders nothing for an empty series. */
+		/**
+		* Inline SVG per-turn energy bars; renders nothing for an empty series.
+		* The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with the bars
+		* right-aligned, so CSS stretching (panel charts use width:100%) keeps bar
+		* proportions stable — a lone turn renders as one normal-width bar at the
+		* right edge instead of a giant column.
+		*/
 		function EnergyBars({ turns, maxTurns, height = 14 }) {
 			const shown = turns.slice(-maxTurns);
 			if (shown.length === 0) return null;
-			const width = shown.length * 3;
+			const slots = Math.max(maxTurns, 1);
+			const width = slots * 3;
+			const offset = slots - shown.length;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
 				className: GreenMeterDock_module_css_default.spark,
 				width,
 				height,
 				viewBox: `0 0 ${width} ${height}`,
+				preserveAspectRatio: "none",
 				"data-green-meter": "bars",
 				"aria-hidden": "true",
-				children: bars(shown, 2, 1, height)
+				children: bars(shown, 2, 1, height, offset)
 			});
 		}
 		/**
