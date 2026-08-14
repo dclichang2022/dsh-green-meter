@@ -72,7 +72,7 @@ Environment fallbacks: `DSH_GREEN_PROFILE`, `DSH_GREEN_CARBON_FACTOR`, `DSH_GREE
 
 ## 💎 thebestai
 
-**[thebestai](https://THEBESTAI_URL_PLACEHOLDER)** is our AI platform. 欢迎大家通过反馈意见可以使用我们的 AI Greentoken 系列服务。
+**[thebestai](https://thebestai.net)** is our AI platform. 欢迎大家通过反馈意见可以使用我们的 AI Greentoken 系列服务。
 
 ## Development
 
