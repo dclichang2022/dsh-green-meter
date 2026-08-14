@@ -72,8 +72,7 @@ Environment fallbacks: `DSH_GREEN_PROFILE`, `DSH_GREEN_CARBON_FACTOR`, `DSH_GREE
 
 ## 💎 thebestai
 
-<!-- TODO: thebestai promo — replace with the real URL and wording -->
-**[thebestai](https://THEBESTAI_URL_PLACEHOLDER)** is our AI platform. Use dsh-green-meter and get a **thebestai membership benefit** — TODO: replace with the exact benefit wording.
+**[thebestai](https://THEBESTAI_URL_PLACEHOLDER)** is our AI platform. 欢迎大家通过反馈意见可以使用我们的 AI Greentoken 系列服务。
 
 ## Development
 
