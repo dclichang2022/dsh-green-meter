@@ -1,19 +1,19 @@
-﻿/**
+/**
  * SidebarEnergyPanel: the green-meter detail surface rendered in the
- * sidebar's `sidebar.energy` seat 鈥?the composer-dock readout toggles it via
+ * sidebar's `sidebar.energy` seat — the composer-dock readout toggles it via
  * the shared panel store, and the live values arrive through
  * `useProjection('greenMeter')` (session-scoped slot kit). Renders nothing
  * while closed or while no session is current. The panel body itself is
  * exported as `EnergyPanelBody` so the dock's popover placement reuses it.
  */
 import type { PropsLocale, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots'
-import type { GreenMeterProjection } from 'dsh-green-meter/client'
+import type { GreenMeterProjection } from '@deepseek-ai/dsh-green-meter/client'
 import { EnergyBars, formatEnergy } from './GreenMeterDock.tsx'
 import { createGreenMeterPanelStore } from './store.ts'
 import type { GreenMeterKey } from './locales.ts'
 import css from './GreenMeterDock.module.css'
 
-/** CO2 absorbed by one adult tree per year, in kg 鈥?mirrors the host's TREE_CO2_KG_PER_YEAR. */
+/** CO2 absorbed by one adult tree per year, in kg — mirrors the host's TREE_CO2_KG_PER_YEAR. */
 const TREE_CO2_KG_PER_YEAR = 20
 
 /** Trees-equivalent formatting, mirroring the /green report's formatTrees. */
@@ -28,16 +28,26 @@ type PanelTranslate = (key: GreenMeterKey, values?: Record<string, string>) => s
 /** The shared detail body: per-turn chart, totals, savings, requests, budget. */
 export function EnergyPanelBody({ meter, t }: { meter: GreenMeterProjection, t: PanelTranslate }) {
   const recent = meter.turns.slice(-24)
+  // Bars are right-aligned in a fixed 24-slot grid: the label row starts at
+  // the first visible bar (empty slots on the left keep their width).
+  const emptySlots = 24 - recent.length
+  const labelInset = `${emptySlots / 24 * 100}%`
   return (
     <>
       <div className={css.panelChart} data-green-meter="chart">
         <EnergyBars turns={recent} maxTurns={24} height={44} />
-        {recent.length > 0
-          ? <div className={css.chartLabels} aria-hidden="true">
+        {recent.length === 1
+          ? <div className={css.chartLabels} style={{ marginLeft: labelInset }}
+            data-green-meter="chart-labels" aria-hidden="true">
             <span>{t('firstTurn', { value: String(recent[0]!.turn) })}</span>
-            <span>{t('lastTurn', { value: String(recent[recent.length - 1]!.turn) })}</span>
           </div>
-          : null}
+          : recent.length > 0
+            ? <div className={css.chartLabels} style={{ marginLeft: labelInset }}
+              data-green-meter="chart-labels" aria-hidden="true">
+              <span>{t('firstTurn', { value: String(recent[0]!.turn) })}</span>
+              <span>{t('lastTurn', { value: String(recent[recent.length - 1]!.turn) })}</span>
+            </div>
+            : null}
       </div>
       <dl className={css.rows}>
         <div className={css.row}><dt>{t('requests')}</dt><dd>{meter.requests}</dd></div>
@@ -70,7 +80,7 @@ export function EnergyPanelBody({ meter, t }: { meter: GreenMeterProjection, t: 
               <li key={`${entry.turn}-${entry.step}`} className={css.requestRow} data-green-meter="request">
                 <span className={css.requestLabel}>{t('step', { turn: String(entry.turn), step: String(entry.step) })}</span>
                 <span className={css.requestValue}>
-                  {formatEnergy(entry.energyJ)} 路 {entry.carbonG.toFixed(2)} g 路 {entry.outputTokens.toLocaleString('en-US')} tok
+                  {formatEnergy(entry.energyJ)} · {entry.carbonG.toFixed(2)} g · {entry.outputTokens.toLocaleString('en-US')} tok
                 </span>
               </li>
             ))}

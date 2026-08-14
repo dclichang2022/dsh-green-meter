@@ -17,29 +17,29 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var GreenMeterDock_module_css_default = {
-			"requestList": "RQwx2G_requestList",
-			"budget": "RQwx2G_budget",
-			"panelHead": "RQwx2G_panelHead",
-			"savingsValue": "RQwx2G_savingsValue",
 			"trigger": "RQwx2G_trigger",
-			"spark": "RQwx2G_spark",
 			"panelTitle": "RQwx2G_panelTitle",
-			"savingsTitle": "RQwx2G_savingsTitle",
-			"panelChart": "RQwx2G_panelChart",
-			"requestRow": "RQwx2G_requestRow",
-			"requestValue": "RQwx2G_requestValue",
-			"root": "RQwx2G_root",
-			"chartLabels": "RQwx2G_chartLabels",
-			"sep": "RQwx2G_sep",
-			"savings": "RQwx2G_savings",
-			"requestLabel": "RQwx2G_requestLabel",
-			"sidebarPanel": "RQwx2G_sidebarPanel",
 			"requestTitle": "RQwx2G_requestTitle",
-			"requestRows": "RQwx2G_requestRows",
-			"rows": "RQwx2G_rows",
-			"close": "RQwx2G_close",
 			"row": "RQwx2G_row",
-			"popoverPanel": "RQwx2G_popoverPanel"
+			"requestLabel": "RQwx2G_requestLabel",
+			"savings": "RQwx2G_savings",
+			"spark": "RQwx2G_spark",
+			"chartLabels": "RQwx2G_chartLabels",
+			"panelChart": "RQwx2G_panelChart",
+			"savingsTitle": "RQwx2G_savingsTitle",
+			"requestRow": "RQwx2G_requestRow",
+			"panelHead": "RQwx2G_panelHead",
+			"popoverPanel": "RQwx2G_popoverPanel",
+			"savingsValue": "RQwx2G_savingsValue",
+			"root": "RQwx2G_root",
+			"requestList": "RQwx2G_requestList",
+			"close": "RQwx2G_close",
+			"sep": "RQwx2G_sep",
+			"rows": "RQwx2G_rows",
+			"requestRows": "RQwx2G_requestRows",
+			"sidebarPanel": "RQwx2G_sidebarPanel",
+			"requestValue": "RQwx2G_requestValue",
+			"budget": "RQwx2G_budget"
 		};
 		//#endregion
 		//#region src/client/SidebarEnergyPanel.tsx
@@ -54,6 +54,7 @@ window.__ModuleLoader__.load({
 		/** The shared detail body: per-turn chart, totals, savings, requests, budget. */
 		function EnergyPanelBody({ meter, t }) {
 			const recent = meter.turns.slice(-24);
+			const labelInset = `${(24 - recent.length) / 24 * 100}%`;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 				/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: GreenMeterDock_module_css_default.panelChart,
@@ -62,8 +63,16 @@ window.__ModuleLoader__.load({
 						turns: recent,
 						maxTurns: 24,
 						height: 44
-					}), recent.length > 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					}), recent.length === 1 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						className: GreenMeterDock_module_css_default.chartLabels,
+						style: { marginLeft: labelInset },
+						"data-green-meter": "chart-labels",
+						"aria-hidden": "true",
+						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("firstTurn", { value: String(recent[0].turn) }) })
+					}) : recent.length > 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: GreenMeterDock_module_css_default.chartLabels,
+						style: { marginLeft: labelInset },
+						"data-green-meter": "chart-labels",
 						"aria-hidden": "true",
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("firstTurn", { value: String(recent[0].turn) }) }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("lastTurn", { value: String(recent[recent.length - 1].turn) }) })]
 					}) : null]

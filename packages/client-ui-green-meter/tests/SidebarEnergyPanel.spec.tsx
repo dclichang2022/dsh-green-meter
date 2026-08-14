@@ -102,6 +102,23 @@ describe('SidebarEnergyPanel', () => {
     expect(rect!.getAttribute('width')).toBe('2')
   })
 
+  test('chart labels follow the bars: inset by the empty slots and single-turn shows one label', () => {
+    const single = { ...meter(), turns: [{ turn: 7, steps: 1, energyJ: 500, carbonG: 0.08 }] }
+    const { container } = panel(single, true)
+    const labels = container.querySelector('[data-green-meter="chart-labels"]') as HTMLElement | null
+    expect(labels).not.toBeNull()
+    // 23 empty slots of 24 → label row inset ≈ 95.8%.
+    expect(labels!.style.marginLeft.startsWith('95.833')).toBe(true)
+    expect(labels!.querySelectorAll('span')).toHaveLength(1)
+    expect(labels!.textContent).toContain('第 7 轮')
+
+    // Two turns: 22 empty slots → inset 91.7%; two labels, oldest left.
+    const { container: two } = panel(meter(), true)
+    const labelsTwo = two.querySelector('[data-green-meter="chart-labels"]') as HTMLElement | null
+    expect(labelsTwo!.style.marginLeft.startsWith('91.666')).toBe(true)
+    expect(labelsTwo!.querySelectorAll('span')).toHaveLength(2)
+  })
+
   test('renders the request-granularity list, newest first', () => {
     const { container } = panel(meter(), true)
     expect(screen.getByText('最近请求')).toBeTruthy()
