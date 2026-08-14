@@ -30,14 +30,14 @@ export type GreenMeterDockProps =
   & { placement: 'sidebar' | 'popover' }
 
 /** One bar per turn, width 2px + 1px gap, normalized to the series max. */
-function bars(turns: readonly GreenMeterTurn[], barWidth: number, gap: number, height: number, offset: number): React.JSX.Element[] {
+function bars(turns: readonly GreenMeterTurn[], barWidth: number, gap: number, height: number): React.JSX.Element[] {
   const max = Math.max(1, ...turns.map(turn => turn.energyJ))
   return turns.map((turn, index) => {
     const h = Math.max(1, Math.round(turn.energyJ / max * height))
     return (
       <rect
         key={turn.turn}
-        x={(offset + index) * (barWidth + gap)}
+        x={index * (barWidth + gap)}
         y={height - h}
         width={barWidth}
         height={h}
@@ -49,22 +49,21 @@ function bars(turns: readonly GreenMeterTurn[], barWidth: number, gap: number, h
 
 /**
  * Inline SVG per-turn energy bars; renders nothing for an empty series.
- * The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with the bars
- * right-aligned, so CSS stretching (panel charts use width:100%) keeps bar
- * proportions stable — a lone turn renders as one normal-width bar at the
- * right edge instead of a giant column.
+ * The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with bars
+ * left-aligned from the first slot, so CSS stretching (panel charts use
+ * width:100%) keeps bar proportions stable — a lone turn renders as one
+ * normal-width bar at the left edge.
  */
 export function EnergyBars({ turns, maxTurns, height = 14 }: { turns: readonly GreenMeterTurn[], maxTurns: number, height?: number }) {
   const shown = turns.slice(-maxTurns)
   if (shown.length === 0) return null
   const slots = Math.max(maxTurns, 1)
   const width = slots * 3
-  const offset = slots - shown.length
   return (
     <svg className={css.spark} width={width} height={height} viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       data-green-meter="bars" aria-hidden="true">
-      {bars(shown, 2, 1, height, offset)}
+      {bars(shown, 2, 1, height)}
     </svg>
   )
 }

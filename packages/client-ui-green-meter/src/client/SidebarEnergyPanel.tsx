@@ -28,22 +28,16 @@ type PanelTranslate = (key: GreenMeterKey, values?: Record<string, string>) => s
 /** The shared detail body: per-turn chart, totals, savings, requests, budget. */
 export function EnergyPanelBody({ meter, t }: { meter: GreenMeterProjection, t: PanelTranslate }) {
   const recent = meter.turns.slice(-24)
-  // Bars are right-aligned in a fixed 24-slot grid: the label row starts at
-  // the first visible bar (empty slots on the left keep their width).
-  const emptySlots = 24 - recent.length
-  const labelInset = `${emptySlots / 24 * 100}%`
   return (
     <>
       <div className={css.panelChart} data-green-meter="chart">
         <EnergyBars turns={recent} maxTurns={24} height={44} />
         {recent.length === 1
-          ? <div className={css.chartLabels} style={{ marginLeft: labelInset }}
-            data-green-meter="chart-labels" aria-hidden="true">
+          ? <div className={css.chartLabels} data-green-meter="chart-labels" aria-hidden="true">
             <span>{t('firstTurn', { value: String(recent[0]!.turn) })}</span>
           </div>
           : recent.length > 0
-            ? <div className={css.chartLabels} style={{ marginLeft: labelInset }}
-              data-green-meter="chart-labels" aria-hidden="true">
+            ? <div className={css.chartLabels} data-green-meter="chart-labels" aria-hidden="true">
               <span>{t('firstTurn', { value: String(recent[0]!.turn) })}</span>
               <span>{t('lastTurn', { value: String(recent[recent.length - 1]!.turn) })}</span>
             </div>

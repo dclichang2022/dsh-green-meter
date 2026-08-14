@@ -97,26 +97,26 @@ describe('SidebarEnergyPanel', () => {
     expect(svg!.getAttribute('preserveAspectRatio')).toBe('none')
     const rect = svg!.querySelector('rect') as SVGRectElement | null
     expect(rect).not.toBeNull()
-    // Right-aligned: the single bar sits in the last slot (x = 23 * 3).
-    expect(rect!.getAttribute('x')).toBe('69')
+    // Left-aligned: the single bar sits in the first slot (x = 0).
+    expect(rect!.getAttribute('x')).toBe('0')
     expect(rect!.getAttribute('width')).toBe('2')
   })
 
-  test('chart labels follow the bars: inset by the empty slots and single-turn shows one label', () => {
+  test('chart labels sit at the two ends, single-turn shows one label', () => {
     const single = { ...meter(), turns: [{ turn: 7, steps: 1, energyJ: 500, carbonG: 0.08 }] }
     const { container } = panel(single, true)
     const labels = container.querySelector('[data-green-meter="chart-labels"]') as HTMLElement | null
     expect(labels).not.toBeNull()
-    // 23 empty slots of 24 → label row inset ≈ 95.8%.
-    expect(labels!.style.marginLeft.startsWith('95.833')).toBe(true)
+    expect(labels!.style.marginLeft).toBe('')
     expect(labels!.querySelectorAll('span')).toHaveLength(1)
     expect(labels!.textContent).toContain('第 7 轮')
 
-    // Two turns: 22 empty slots → inset 91.7%; two labels, oldest left.
+    // Two turns: oldest label left, newest label right.
     const { container: two } = panel(meter(), true)
     const labelsTwo = two.querySelector('[data-green-meter="chart-labels"]') as HTMLElement | null
-    expect(labelsTwo!.style.marginLeft.startsWith('91.666')).toBe(true)
     expect(labelsTwo!.querySelectorAll('span')).toHaveLength(2)
+    expect(labelsTwo!.textContent).toContain('第 1 轮')
+    expect(labelsTwo!.textContent).toContain('第 2 轮')
   })
 
   test('renders the request-granularity list, newest first', () => {

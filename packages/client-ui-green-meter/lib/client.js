@@ -17,29 +17,29 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var GreenMeterDock_module_css_default = {
-			"trigger": "RQwx2G_trigger",
-			"panelTitle": "RQwx2G_panelTitle",
-			"requestTitle": "RQwx2G_requestTitle",
-			"row": "RQwx2G_row",
-			"requestLabel": "RQwx2G_requestLabel",
 			"savings": "RQwx2G_savings",
-			"spark": "RQwx2G_spark",
-			"chartLabels": "RQwx2G_chartLabels",
-			"panelChart": "RQwx2G_panelChart",
-			"savingsTitle": "RQwx2G_savingsTitle",
-			"requestRow": "RQwx2G_requestRow",
-			"panelHead": "RQwx2G_panelHead",
-			"popoverPanel": "RQwx2G_popoverPanel",
-			"savingsValue": "RQwx2G_savingsValue",
+			"requestTitle": "RQwx2G_requestTitle",
 			"root": "RQwx2G_root",
-			"requestList": "RQwx2G_requestList",
+			"savingsTitle": "RQwx2G_savingsTitle",
 			"close": "RQwx2G_close",
-			"sep": "RQwx2G_sep",
-			"rows": "RQwx2G_rows",
+			"savingsValue": "RQwx2G_savingsValue",
+			"popoverPanel": "RQwx2G_popoverPanel",
 			"requestRows": "RQwx2G_requestRows",
+			"panelChart": "RQwx2G_panelChart",
+			"rows": "RQwx2G_rows",
 			"sidebarPanel": "RQwx2G_sidebarPanel",
+			"chartLabels": "RQwx2G_chartLabels",
+			"requestRow": "RQwx2G_requestRow",
+			"sep": "RQwx2G_sep",
+			"panelTitle": "RQwx2G_panelTitle",
+			"spark": "RQwx2G_spark",
+			"budget": "RQwx2G_budget",
+			"requestLabel": "RQwx2G_requestLabel",
+			"trigger": "RQwx2G_trigger",
 			"requestValue": "RQwx2G_requestValue",
-			"budget": "RQwx2G_budget"
+			"panelHead": "RQwx2G_panelHead",
+			"requestList": "RQwx2G_requestList",
+			"row": "RQwx2G_row"
 		};
 		//#endregion
 		//#region src/client/SidebarEnergyPanel.tsx
@@ -54,7 +54,6 @@ window.__ModuleLoader__.load({
 		/** The shared detail body: per-turn chart, totals, savings, requests, budget. */
 		function EnergyPanelBody({ meter, t }) {
 			const recent = meter.turns.slice(-24);
-			const labelInset = `${(24 - recent.length) / 24 * 100}%`;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 				/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: GreenMeterDock_module_css_default.panelChart,
@@ -65,13 +64,11 @@ window.__ModuleLoader__.load({
 						height: 44
 					}), recent.length === 1 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						className: GreenMeterDock_module_css_default.chartLabels,
-						style: { marginLeft: labelInset },
 						"data-green-meter": "chart-labels",
 						"aria-hidden": "true",
 						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("firstTurn", { value: String(recent[0].turn) }) })
 					}) : recent.length > 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: GreenMeterDock_module_css_default.chartLabels,
-						style: { marginLeft: labelInset },
 						"data-green-meter": "chart-labels",
 						"aria-hidden": "true",
 						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("firstTurn", { value: String(recent[0].turn) }) }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("lastTurn", { value: String(recent[recent.length - 1].turn) }) })]
@@ -215,12 +212,12 @@ window.__ModuleLoader__.load({
 			return `${joules.toFixed(1)} J`;
 		}
 		/** One bar per turn, width 2px + 1px gap, normalized to the series max. */
-		function bars(turns, barWidth, gap, height, offset) {
+		function bars(turns, barWidth, gap, height) {
 			const max = Math.max(1, ...turns.map((turn) => turn.energyJ));
 			return turns.map((turn, index) => {
 				const h = Math.max(1, Math.round(turn.energyJ / max * height));
 				return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("rect", {
-					x: (offset + index) * (barWidth + gap),
+					x: index * (barWidth + gap),
 					y: height - h,
 					width: barWidth,
 					height: h,
@@ -230,17 +227,15 @@ window.__ModuleLoader__.load({
 		}
 		/**
 		* Inline SVG per-turn energy bars; renders nothing for an empty series.
-		* The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with the bars
-		* right-aligned, so CSS stretching (panel charts use width:100%) keeps bar
-		* proportions stable — a lone turn renders as one normal-width bar at the
-		* right edge instead of a giant column.
+		* The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with bars
+		* left-aligned from the first slot, so CSS stretching (panel charts use
+		* width:100%) keeps bar proportions stable — a lone turn renders as one
+		* normal-width bar at the left edge.
 		*/
 		function EnergyBars({ turns, maxTurns, height = 14 }) {
 			const shown = turns.slice(-maxTurns);
 			if (shown.length === 0) return null;
-			const slots = Math.max(maxTurns, 1);
-			const width = slots * 3;
-			const offset = slots - shown.length;
+			const width = Math.max(maxTurns, 1) * 3;
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
 				className: GreenMeterDock_module_css_default.spark,
 				width,
@@ -249,7 +244,7 @@ window.__ModuleLoader__.load({
 				preserveAspectRatio: "none",
 				"data-green-meter": "bars",
 				"aria-hidden": "true",
-				children: bars(shown, 2, 1, height, offset)
+				children: bars(shown, 2, 1, height)
 			});
 		}
 		/**
