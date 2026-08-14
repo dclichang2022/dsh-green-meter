@@ -1,0 +1,19 @@
+# Example profile patch — copy the rows into your dsh profile's cordis.patch.yml
+# ($DSH_HOME/profiles/web/cordis.patch.yml) after installing both packages.
+- insert:
+    # Host plugin: token-profile energy/carbon/cost accounting.
+    - id: green-meter
+      name: 'dsh-green-meter'
+      config:
+        profile: proxy
+        carbonFactorKgPerKwh: 0.5777
+        electricityPriceCnyPerKwh: 0.56
+        budgetJ: 0
+
+    # Browser surface: composer-dock readout + detail panel.
+    # panelPlacement: 'popover' works on any vanilla install; 'sidebar' needs
+    # the ui-sidebar patch from patches/ui-sidebar-sidebar-energy.patch.
+    - id: ui-green-meter
+      name: 'dsh-client-ui-green-meter'
+      config:
+        panelPlacement: popover

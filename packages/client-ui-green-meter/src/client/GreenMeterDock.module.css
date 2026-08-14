@@ -1,0 +1,203 @@
+/* Ambient readout under the composer card (the stats-line family). */
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--dsw-text-tertiary);
+  white-space: nowrap;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.trigger:hover {
+  color: var(--dsw-text-secondary);
+}
+
+.sep {
+  color: var(--dsw-text-quaternary);
+}
+
+.spark {
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0.9;
+}
+
+.spark rect {
+  fill: currentColor;
+}
+
+/* Sidebar detail panel: static block inside the sidebar.energy seat. */
+.sidebarPanel {
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-border);
+  border-radius: 8px;
+  background: var(--dsw-surface);
+  color: var(--dsw-text-secondary);
+}
+
+.sidebarPanel .spark {
+  width: 100%;
+  height: auto;
+}
+
+/* Popover detail panel: floating card anchored above the readout
+   (panelPlacement: 'popover' — the vanilla-install fallback). */
+.popoverPanel {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  width: 260px;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-border);
+  border-radius: 8px;
+  background: var(--dsw-surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  color: var(--dsw-text-secondary);
+  white-space: normal;
+}
+
+.popoverPanel .spark {
+  width: 100%;
+  height: auto;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.panelTitle {
+  font-weight: 600;
+}
+
+.close {
+  padding: 2px 6px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: var(--dsw-text-tertiary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--dsw-text-primary);
+}
+
+.panelChart {
+  padding: 4px 0 2px;
+}
+
+.chartLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--dsw-text-quaternary);
+}
+
+.rows {
+  margin: 8px 0 0;
+  display: grid;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.row dt {
+  color: var(--dsw-text-tertiary);
+}
+
+.row dd {
+  margin: 0;
+  color: var(--dsw-text-secondary);
+}
+
+.budget {
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--dsw-surface-secondary);
+  font-size: 12px;
+}
+
+/* Counterfactual cache-savings callout (prefix caching avoided prefill). */
+.savings {
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgb(60 158 109 / 45%);
+  background: rgb(60 158 109 / 10%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.savingsTitle {
+  font-weight: 600;
+  color: #2f8a5c;
+}
+
+.savingsValue {
+  color: var(--dsw-text-secondary);
+}
+
+/* Request-granularity list (last N model calls, newest first). */
+.requestList {
+  margin-top: 10px;
+  border-top: 1px solid var(--dsw-border);
+  padding-top: 8px;
+}
+
+.requestTitle {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.requestRows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.requestRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.requestLabel {
+  color: var(--dsw-text-tertiary);
+  white-space: nowrap;
+}
+
+.requestValue {
+  color: var(--dsw-text-secondary);
+  text-align: right;
+}
