@@ -41,21 +41,12 @@
                          "zod":  "^4.4.3"
                      },
     "peerDependencies":  {
-                             "@deepseek-ai/dsh-commands":  "workspace:^",
-                             "@deepseek-ai/dsh-invariants":  "workspace:^",
-                             "@deepseek-ai/dsh-llm":  "workspace:^",
-                             "@deepseek-ai/dsh-session":  "workspace:^",
-                             "@deepseek-ai/dsh-session-projection":  "workspace:^",
-                             "@deepseek-ai/dsh-tools":  "workspace:^",
-                             "@deepseek-ai/cordis":  "workspace:^"
-                         },
-    "devDependencies":  {
-                            "@deepseek-ai/dsh-commands":  "workspace:^",
-                            "@deepseek-ai/dsh-invariants":  "workspace:^",
-                            "@deepseek-ai/dsh-llm":  "workspace:^",
-                            "@deepseek-ai/dsh-session":  "workspace:^",
-                            "@deepseek-ai/dsh-session-projection":  "workspace:^",
-                            "@deepseek-ai/dsh-tools":  "workspace:^",
-                            "@deepseek-ai/cordis":  "workspace:^"
-                        }
+                             "@deepseek-ai/dsh-commands":  "\u003e=0.0.1-rc.1",
+                             "@deepseek-ai/dsh-invariants":  "\u003e=0.0.1-rc.1",
+                             "@deepseek-ai/dsh-llm":  "\u003e=0.0.1-rc.1",
+                             "@deepseek-ai/dsh-session":  "\u003e=0.0.1-rc.1",
+                             "@deepseek-ai/dsh-session-projection":  "\u003e=0.0.1-rc.1",
+                             "@deepseek-ai/dsh-tools":  "\u003e=0.0.1-rc.1",
+                             "@deepseek-ai/cordis":  "\u003e=0.0.1-rc.1"
+                         }
 }
