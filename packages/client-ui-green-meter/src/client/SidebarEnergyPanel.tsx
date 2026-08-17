@@ -1,19 +1,19 @@
 /**
  * SidebarEnergyPanel: the green-meter detail surface rendered in the
- * sidebar's `sidebar.energy` seat 鈥?the composer-dock readout toggles it via
+ * sidebar's `sidebar.energy` seat — the composer-dock readout toggles it via
  * the shared panel store, and the live values arrive through
  * `useProjection('greenMeter')` (session-scoped slot kit). Renders nothing
  * while closed or while no session is current. The panel body itself is
  * exported as `EnergyPanelBody` so the dock's popover placement reuses it.
  */
-import type { PropsLocale, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots'
+import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { GreenMeterProjection } from 'dsh-green-meter/client'
 import { EnergyBars, formatEnergy } from './GreenMeterDock.tsx'
-import { createGreenMeterPanelStore } from './store.ts'
+import { panelActions, usePanelState } from './store.ts'
 import type { GreenMeterKey } from './locales.ts'
 import css from './GreenMeterDock.module.css'
 
-/** CO2 absorbed by one adult tree per year, in kg 鈥?mirrors the host's TREE_CO2_KG_PER_YEAR. */
+/** CO2 absorbed by one adult tree per year, in kg — mirrors the host's TREE_CO2_KG_PER_YEAR. */
 const TREE_CO2_KG_PER_YEAR = 20
 
 /** Trees-equivalent formatting, mirroring the /green report's formatTrees. */
@@ -74,7 +74,7 @@ export function EnergyPanelBody({ meter, t }: { meter: GreenMeterProjection, t: 
               <li key={`${entry.turn}-${entry.step}`} className={css.requestRow} data-green-meter="request">
                 <span className={css.requestLabel}>{t('step', { turn: String(entry.turn), step: String(entry.step) })}</span>
                 <span className={css.requestValue}>
-                  {formatEnergy(entry.energyJ)} 路 {entry.carbonG.toFixed(2)} g 路 {entry.outputTokens.toLocaleString('en-US')} tok
+                  {formatEnergy(entry.energyJ)} · {entry.carbonG.toFixed(2)} g · {entry.outputTokens.toLocaleString('en-US')} tok
                 </span>
               </li>
             ))}
@@ -95,22 +95,21 @@ export function EnergyPanelBody({ meter, t }: { meter: GreenMeterProjection, t: 
   )
 }
 
-/** Full panel props: sidebar.energy owner share + session kit + panel store + locale seat. */
+/** Full panel props: sidebar.energy owner share + session kit + locale seat. */
 export type SidebarEnergyPanelProps =
   PropsRuntime<'sidebar.energy'>
   & PropsLocale<'greenMeter'>
-  & PropsStore<ReturnType<typeof createGreenMeterPanelStore>>
 
 /** The sidebar detail panel; closed/absent states render nothing. */
-export function SidebarEnergyPanel({ useProjection, useStore, actions, t }: SidebarEnergyPanelProps) {
-  const open = useStore(state => state.open)
+export function SidebarEnergyPanel({ useProjection, t }: SidebarEnergyPanelProps) {
+  const { open } = usePanelState()
   const meter = useProjection('greenMeter') as GreenMeterProjection | null | undefined
   if (!open || meter === undefined || meter === null) return null
   return (
     <div className={css.sidebarPanel} data-green-meter="sidebar-panel">
       <div className={css.panelHead}>
         <span className={css.panelTitle}>{t('panelTitle')}</span>
-        <button className={css.close} onClick={() => { actions.close() }} data-green-meter="close">{t('close')}</button>
+        <button className={css.close} onClick={() => { panelActions.close() }} data-green-meter="close">{t('close')}</button>
       </div>
       <EnergyPanelBody meter={meter} t={t} />
     </div>

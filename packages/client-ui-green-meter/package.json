@@ -1,7 +1,7 @@
-﻿{
+{
     "name":  "dsh-client-ui-green-meter",
     "description":  "Always-visible session energy/carbon readout in the composer dock, over the greenMeter session projection",
-    "version":  "1.1.0",
+    "version":  "1.1.1",
     "repository":  {
                        "type":  "git",
                        "url":  "git+https://github.com/deepseek-ai/deepseek-harness.git",

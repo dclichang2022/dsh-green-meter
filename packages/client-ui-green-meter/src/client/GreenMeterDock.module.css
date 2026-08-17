@@ -99,6 +99,21 @@
   height: auto;
 }
 
+/* The overlay drawer header doubles as a drag handle. */
+.overlayPanel .panelHead {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.overlayPanel .panelHead:active {
+  cursor: grabbing;
+}
+
+.overlayPanel .panelHead .close {
+  cursor: pointer;
+}
+
 .panelHead {
   display: flex;
   align-items: center;

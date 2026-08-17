@@ -1,5 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { EnergyBars, formatEnergy } from "./GreenMeterDock.js";
+import { panelActions, usePanelState } from "./store.js";
 import css from './GreenMeterDock.module.css';
 /** CO2 absorbed by one adult tree per year, in kg — mirrors the host's TREE_CO2_KG_PER_YEAR. */
 const TREE_CO2_KG_PER_YEAR = 20;
@@ -14,9 +15,11 @@ function formatTrees(trees) {
 /** The shared detail body: per-turn chart, totals, savings, requests, budget. */
 export function EnergyPanelBody({ meter, t }) {
     const recent = meter.turns.slice(-24);
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: css.panelChart, "data-green-meter": "chart", children: [_jsx(EnergyBars, { turns: recent, maxTurns: 24, height: 44 }), recent.length > 0
-                        ? _jsxs("div", { className: css.chartLabels, "aria-hidden": "true", children: [_jsx("span", { children: t('firstTurn', { value: String(recent[0].turn) }) }), _jsx("span", { children: t('lastTurn', { value: String(recent[recent.length - 1].turn) }) })] })
-                        : null] }), _jsxs("dl", { className: css.rows, children: [_jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('requests') }), _jsx("dd", { children: meter.requests })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('inputTokens') }), _jsx("dd", { children: meter.inputTokens.toLocaleString('en-US') })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('outputTokens') }), _jsx("dd", { children: meter.outputTokens.toLocaleString('en-US') })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('energyLabel') }), _jsx("dd", { children: formatEnergy(meter.energyJ) })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('carbonTotal') }), _jsxs("dd", { children: [meter.carbonG.toFixed(1), " g CO2e"] })] }), _jsxs("div", { className: css.row, "data-green-meter": "cost", children: [_jsx("dt", { children: t('costLabel') }), _jsx("dd", { children: t('costValue', { value: meter.costCny.toFixed(4) }) })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('profile') }), _jsxs("dd", { children: [meter.profileId, " (", meter.confidence, ")"] })] })] }), meter.savedCarbonG > 0
+    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: css.panelChart, "data-green-meter": "chart", children: [_jsx(EnergyBars, { turns: recent, maxTurns: 24, height: 44 }), recent.length === 1
+                        ? _jsx("div", { className: css.chartLabels, "data-green-meter": "chart-labels", "aria-hidden": "true", children: _jsx("span", { children: t('firstTurn', { value: String(recent[0].turn) }) }) })
+                        : recent.length > 0
+                            ? _jsxs("div", { className: css.chartLabels, "data-green-meter": "chart-labels", "aria-hidden": "true", children: [_jsx("span", { children: t('firstTurn', { value: String(recent[0].turn) }) }), _jsx("span", { children: t('lastTurn', { value: String(recent[recent.length - 1].turn) }) })] })
+                            : null] }), _jsxs("dl", { className: css.rows, children: [_jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('requests') }), _jsx("dd", { children: meter.requests })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('inputTokens') }), _jsx("dd", { children: meter.inputTokens.toLocaleString('en-US') })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('outputTokens') }), _jsx("dd", { children: meter.outputTokens.toLocaleString('en-US') })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('energyLabel') }), _jsx("dd", { children: formatEnergy(meter.energyJ) })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('carbonTotal') }), _jsxs("dd", { children: [meter.carbonG.toFixed(1), " g CO2e"] })] }), _jsxs("div", { className: css.row, "data-green-meter": "cost", children: [_jsx("dt", { children: t('costLabel') }), _jsx("dd", { children: t('costValue', { value: meter.costCny.toFixed(4) }) })] }), _jsxs("div", { className: css.row, children: [_jsx("dt", { children: t('profile') }), _jsxs("dd", { children: [meter.profileId, " (", meter.confidence, ")"] })] })] }), meter.savedCarbonG > 0
                 ? _jsxs("div", { className: css.savings, "data-green-meter": "savings", children: [_jsx("span", { className: css.savingsTitle, children: t('cacheSaved') }), _jsx("span", { className: css.savingsValue, children: t('cacheSavedValue', {
                                 value: meter.savedCarbonG.toFixed(1),
                                 tokens: meter.cachedTokens.toLocaleString('en-US'),
@@ -33,11 +36,11 @@ export function EnergyPanelBody({ meter, t }) {
                 : null] }));
 }
 /** The sidebar detail panel; closed/absent states render nothing. */
-export function SidebarEnergyPanel({ useProjection, useStore, actions, t }) {
-    const open = useStore(state => state.open);
+export function SidebarEnergyPanel({ useProjection, t }) {
+    const { open } = usePanelState();
     const meter = useProjection('greenMeter');
     if (!open || meter === undefined || meter === null)
         return null;
-    return (_jsxs("div", { className: css.sidebarPanel, "data-green-meter": "sidebar-panel", children: [_jsxs("div", { className: css.panelHead, children: [_jsx("span", { className: css.panelTitle, children: t('panelTitle') }), _jsx("button", { className: css.close, onClick: () => { actions.close(); }, "data-green-meter": "close", children: t('close') })] }), _jsx(EnergyPanelBody, { meter: meter, t: t })] }));
+    return (_jsxs("div", { className: css.sidebarPanel, "data-green-meter": "sidebar-panel", children: [_jsxs("div", { className: css.panelHead, children: [_jsx("span", { className: css.panelTitle, children: t('panelTitle') }), _jsx("button", { className: css.close, onClick: () => { panelActions.close(); }, "data-green-meter": "close", children: t('close') })] }), _jsx(EnergyPanelBody, { meter: meter, t: t })] }));
 }
 //# sourceMappingURL=SidebarEnergyPanel.js.map

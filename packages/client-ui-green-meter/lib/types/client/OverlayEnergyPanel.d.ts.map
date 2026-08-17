@@ -1,0 +1,1 @@
+{"version":3,"file":"OverlayEnergyPanel.d.ts","sourceRoot":"","sources":["../../../src/client/OverlayEnergyPanel.tsx"],"names":[],"mappings":"AAcA,OAAO,KAAK,EAAE,WAAW,EAAE,YAAY,EAAE,MAAM,kCAAkC,CAAA;AAKjF,iEAAiE;AACjE,MAAM,MAAM,uBAAuB,GACjC,YAAY,CAAC,eAAe,CAAC,GAC3B,WAAW,CAAC,YAAY,CAAC,CAAA;AAK7B,qEAAqE;AACrE,wBAAgB,kBAAkB,CAAC,EAAE,CAAC,EAAE,EAAE,uBAAuB,sCA2DhE"}

@@ -1,24 +1,19 @@
-/**
- * GreenMeterDock: the ambient energy/carbon readout under the composer card —
- * the totals label plus a per-turn energy bar sparkline. Clicking it toggles
- * the detail panel: `sidebar` placement renders it in the sidebar's
- * `sidebar.energy` seat, `popover` placement renders it as a floating card
- * above the readout (both share one panel store handle).
- *
- * `undefined` = host green-meter unit not composed (render nothing); `null` =
- * no billable steps yet (the fallback state); otherwise the live values.
- */
-import type { PropsLocale, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots';
+import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots';
 import type { GreenMeterProjection, GreenMeterTurn } from '@deepseek-ai/dsh-green-meter/client';
-import { createGreenMeterPanelStore } from './store.ts';
 import type { GreenMeterKey } from './locales.ts';
 /** J → J/kJ/MJ, mirroring the /green report's energy formatting. */
 export declare function formatEnergy(joules: number): string;
-/** Full dock-entry props: runtime share (InputZone + session kit incl. useProjection), panel store, locale, placement. */
-export type GreenMeterDockProps = PropsRuntime<'conversation.composer.dock'> & PropsLocale<'greenMeter'> & PropsStore<ReturnType<typeof createGreenMeterPanelStore>> & {
-    placement: 'sidebar' | 'popover';
+/** Full dock-entry props: runtime share (InputZone + session kit incl. useProjection), locale, placement. */
+export type GreenMeterDockProps = PropsRuntime<'conversation.composer.dock'> & PropsLocale<'greenMeter'> & {
+    placement: 'sidebar' | 'popover' | 'overlay';
 };
-/** Inline SVG per-turn energy bars; renders nothing for an empty series. */
+/**
+ * Inline SVG per-turn energy bars; renders nothing for an empty series.
+ * The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with bars
+ * left-aligned from the first slot, so CSS stretching (panel charts use
+ * width:100%) keeps bar proportions stable — a lone turn renders as one
+ * normal-width bar at the left edge.
+ */
 export declare function EnergyBars({ turns, maxTurns, height }: {
     turns: readonly GreenMeterTurn[];
     maxTurns: number;
@@ -33,5 +28,5 @@ export declare function PopoverPanel({ meter, t, onClose }: {
     t: (key: GreenMeterKey, values?: Record<string, string>) => string;
     onClose: () => void;
 }): import("react").JSX.Element;
-export declare function GreenMeterDock({ useProjection, useStore, actions, placement, t }: GreenMeterDockProps): import("react").JSX.Element | null;
+export declare function GreenMeterDock({ useProjection, placement, t }: GreenMeterDockProps): import("react").JSX.Element | null;
 //# sourceMappingURL=GreenMeterDock.d.ts.map

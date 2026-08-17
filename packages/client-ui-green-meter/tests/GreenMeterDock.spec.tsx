@@ -7,13 +7,18 @@
  * @module @deepseek-ai/dsh-client-ui-green-meter/tests/GreenMeterDock
  */
 
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { GreenMeterDock, type GreenMeterDockProps } from '../src/client/GreenMeterDock.tsx'
+import { getPanelState, panelActions } from '../src/client/store.ts'
 import type { GreenMeterProjection, GreenMeterTurn } from 'dsh-green-meter/client'
 import { zh, en, type GreenMeterKey } from '../src/client/locales.ts'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  panelActions.close()
+  panelActions.setMeter(null)
+})
 
 function t(key: GreenMeterKey, values?: Record<string, string>): string {
   let template = zh[key]
@@ -24,25 +29,22 @@ function t(key: GreenMeterKey, values?: Record<string, string>): string {
 }
 
 interface Mounted {
-  toggle: ReturnType<typeof vi.fn>
-  close: ReturnType<typeof vi.fn>
   container: HTMLElement
 }
 
 function dock(
   value: GreenMeterProjection | null | undefined,
-  options: { toggle?: ReturnType<typeof vi.fn>, close?: ReturnType<typeof vi.fn>, setMeter?: ReturnType<typeof vi.fn>, open?: boolean, placement?: 'sidebar' | 'popover' | 'overlay' } = {},
+  options: { open?: boolean, placement?: 'sidebar' | 'popover' | 'overlay' } = {},
 ): Mounted {
-  const { toggle = vi.fn(), close = vi.fn(), setMeter = vi.fn(), open = false, placement = 'sidebar' } = options
+  const { open = false, placement = 'sidebar' } = options
+  if (open) panelActions.toggle()
   const props = {
     t,
     useProjection: () => value,
-    useStore: (selector: (state: { open: boolean }) => unknown) => selector({ open }),
-    actions: { toggle, close, setMeter },
     placement,
   } as unknown as GreenMeterDockProps
   const { container } = render(<GreenMeterDock {...props} />)
-  return { toggle, close, container }
+  return { container }
 }
 
 function turns(): GreenMeterTurn[] {
@@ -80,8 +82,6 @@ describe('GreenMeterDock', () => {
     const props = {
       t,
       useProjection: () => undefined,
-      useStore: (selector: (state: { open: boolean }) => unknown) => selector({ open: false }),
-      actions: { toggle: vi.fn(), close: vi.fn(), setMeter: vi.fn() },
       placement: 'sidebar',
     } as unknown as GreenMeterDockProps
     const { container } = render(<GreenMeterDock {...props} />)
@@ -89,20 +89,19 @@ describe('GreenMeterDock', () => {
   })
 
   test('mirrors the live projection into the shared store', () => {
-    const setMeter = vi.fn()
-    dock(liveMeter(), { setMeter })
-    expect(setMeter).toHaveBeenCalledWith(liveMeter())
+    dock(liveMeter())
+    expect(getPanelState().meter).toEqual(liveMeter())
   })
 
   test('renders the empty state before the first billable step', () => {
     dock(null)
-    expect(screen.getByText('鑳借€?鈥?)).toBeTruthy()
+    expect(screen.getByText('能耗 —')).toBeTruthy()
   })
 
   test('renders live energy, carbon, and the per-turn sparkline', () => {
     const { container } = dock(liveMeter())
-    expect(screen.getByText('鑳借€?1.5 kJ')).toBeTruthy()
-    expect(screen.getByText('纰?0.2 g CO2e')).toBeTruthy()
+    expect(screen.getByText('能耗 1.5 kJ')).toBeTruthy()
+    expect(screen.getByText('碳 0.2 g CO2e')).toBeTruthy()
     const svg = container.querySelector('svg[data-green-meter="bars"]')
     expect(svg).not.toBeNull()
     expect(svg!.querySelectorAll('rect')).toHaveLength(2)
@@ -110,25 +109,25 @@ describe('GreenMeterDock', () => {
 
   test('energy formatting matches the /green report tiers', () => {
     dock({ ...liveMeter(), energyJ: 2_300_000 })
-    expect(screen.getByText('鑳借€?2.30 MJ')).toBeTruthy()
+    expect(screen.getByText('能耗 2.30 MJ')).toBeTruthy()
     dock({ ...liveMeter(), energyJ: 42 })
-    expect(screen.getByText('鑳借€?42.0 J')).toBeTruthy()
+    expect(screen.getByText('能耗 42.0 J')).toBeTruthy()
   })
 
   test('clicking the readout toggles the shared panel store', () => {
-    const toggle = vi.fn()
-    dock(liveMeter(), { toggle })
-    fireEvent.click(screen.getByText('鑳借€?1.5 kJ'))
-    expect(toggle).toHaveBeenCalledTimes(1)
+    dock(liveMeter())
+    fireEvent.click(screen.getByText('能耗 1.5 kJ'))
+    expect(getPanelState().open).toBe(true)
+    fireEvent.click(screen.getByText('能耗 1.5 kJ'))
+    expect(getPanelState().open).toBe(false)
   })
 
   test('popover placement renders the detail panel above the readout while open', () => {
-    const close = vi.fn()
-    const { container } = dock(liveMeter(), { placement: 'popover', open: true, close })
+    const { container } = dock(liveMeter(), { placement: 'popover', open: true })
     expect(container.querySelector('[data-green-meter="panel"]')).not.toBeNull()
-    expect(screen.getByText('浼氳瘽鑳借€楁槑缁?)).toBeTruthy()
-    fireEvent.click(screen.getByText('鍏抽棴'))
-    expect(close).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('会话能耗明细')).toBeTruthy()
+    fireEvent.click(screen.getByText('关闭'))
+    expect(getPanelState().open).toBe(false)
   })
 
   test('popover placement renders no panel while closed', () => {

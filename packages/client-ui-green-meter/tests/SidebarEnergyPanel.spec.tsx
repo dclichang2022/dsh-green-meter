@@ -2,17 +2,22 @@
 /**
  * SidebarEnergyPanel presentation behavior: closed/absent states render
  * nothing; the open state renders the per-turn chart, totals, profile, and
- * budget rows; close dispatches the shared store action.
+ * budget rows; close dispatches the shared panel store action.
  * @module @deepseek-ai/dsh-client-ui-green-meter/tests/SidebarEnergyPanel
  */
 
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { SidebarEnergyPanel, type SidebarEnergyPanelProps } from '../src/client/SidebarEnergyPanel.tsx'
+import { getPanelState, panelActions } from '../src/client/store.ts'
 import type { GreenMeterProjection, GreenMeterTurn } from 'dsh-green-meter/client'
 import { zh, type GreenMeterKey } from '../src/client/locales.ts'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  panelActions.close()
+  panelActions.setMeter(null)
+})
 
 function t(key: GreenMeterKey, values?: Record<string, string>): string {
   let template = zh[key]
@@ -52,19 +57,17 @@ function meter(): GreenMeterProjection {
 }
 
 interface Mounted {
-  close: ReturnType<typeof vi.fn>
   container: HTMLElement
 }
 
-function panel(value: GreenMeterProjection | null | undefined, open: boolean, close = vi.fn()): Mounted {
+function panel(value: GreenMeterProjection | null | undefined, open: boolean): Mounted {
+  if (getPanelState().open !== open) panelActions.toggle()
   const props = {
     t,
     useProjection: () => value,
-    useStore: (selector: (state: { open: boolean }) => unknown) => selector({ open }),
-    actions: { close },
   } as unknown as SidebarEnergyPanelProps
   const { container } = render(<SidebarEnergyPanel {...props} />)
-  return { close, container }
+  return { container }
 }
 
 describe('SidebarEnergyPanel', () => {
@@ -79,10 +82,10 @@ describe('SidebarEnergyPanel', () => {
   })
   test('renders the chart, totals, and profile when open', () => {
     const { container } = panel(meter(), true)
-    expect(screen.getByText('浼氳瘽鑳借€楁槑缁?)).toBeTruthy()
+    expect(screen.getByText('会话能耗明细')).toBeTruthy()
     expect(screen.getByText('h20-proxy-v1 (proxy)')).toBeTruthy()
-    expect(screen.getByText('绗?1 杞?)).toBeTruthy()
-    expect(screen.getByText('绗?2 杞?)).toBeTruthy()
+    expect(screen.getByText('第 1 轮')).toBeTruthy()
+    expect(screen.getByText('第 2 轮')).toBeTruthy()
     expect(container.querySelector('svg[data-green-meter="bars"]')).not.toBeNull()
     expect(screen.getByText('1.5 kJ')).toBeTruthy()
   })
@@ -92,7 +95,7 @@ describe('SidebarEnergyPanel', () => {
     const { container } = panel(single, true)
     const svg = container.querySelector('svg[data-green-meter="bars"]') as SVGElement | null
     expect(svg).not.toBeNull()
-    // Fixed slot grid: 24 slots 脳 3px viewBox, non-uniform scaling allowed.
+    // Fixed slot grid: 24 slots × 3px viewBox, non-uniform scaling allowed.
     expect(svg!.getAttribute('width')).toBe('72')
     expect(svg!.getAttribute('preserveAspectRatio')).toBe('none')
     const rect = svg!.querySelector('rect') as SVGRectElement | null
@@ -109,33 +112,33 @@ describe('SidebarEnergyPanel', () => {
     expect(labels).not.toBeNull()
     expect(labels!.style.marginLeft).toBe('')
     expect(labels!.querySelectorAll('span')).toHaveLength(1)
-    expect(labels!.textContent).toContain('绗?7 杞?)
+    expect(labels!.textContent).toContain('第 7 轮')
 
     // Two turns: oldest label left, newest label right.
     const { container: two } = panel(meter(), true)
     const labelsTwo = two.querySelector('[data-green-meter="chart-labels"]') as HTMLElement | null
     expect(labelsTwo!.querySelectorAll('span')).toHaveLength(2)
-    expect(labelsTwo!.textContent).toContain('绗?1 杞?)
-    expect(labelsTwo!.textContent).toContain('绗?2 杞?)
+    expect(labelsTwo!.textContent).toContain('第 1 轮')
+    expect(labelsTwo!.textContent).toContain('第 2 轮')
   })
 
   test('renders the request-granularity list, newest first', () => {
     const { container } = panel(meter(), true)
-    expect(screen.getByText('鏈€杩戣姹?)).toBeTruthy()
+    expect(screen.getByText('最近请求')).toBeTruthy()
     const rows = container.querySelectorAll('[data-green-meter="request"]')
     expect(rows).toHaveLength(3)
     // Newest first: turn 2 step 1 leads.
-    expect(rows[0]!.textContent).toContain('绗?2 杞?路 绗?1 姝?)
+    expect(rows[0]!.textContent).toContain('第 2 轮 · 第 1 步')
     expect(rows[0]!.textContent).toContain('20 tok')
-    expect(rows[2]!.textContent).toContain('绗?1 杞?路 绗?1 姝?)
+    expect(rows[2]!.textContent).toContain('第 1 轮 · 第 1 步')
   })
 
   test('renders the cache-savings callout when cached tokens exist', () => {
     const { container } = panel(meter(), true)
     expect(container.querySelector('[data-green-meter="savings"]')).not.toBeNull()
-    expect(screen.getByText('缂撳瓨鑺傜⒊')).toBeTruthy()
-    expect(screen.getByText(/绾?1\.4 g CO2e/)).toBeTruthy()
-    // Trees equivalent line: 1.42 g / 1000 / 20 kg 鈫?< 0.05 trees.
+    expect(screen.getByText('缓存节碳')).toBeTruthy()
+    expect(screen.getByText(/约 1\.4 g CO2e/)).toBeTruthy()
+    // Trees equivalent line: 1.42 g / 1000 / 20 kg → < 0.05 trees.
     expect(container.querySelector('[data-green-meter="trees"]')).not.toBeNull()
     expect(screen.getByText(/<0\.05/)).toBeTruthy()
   })
@@ -143,8 +146,8 @@ describe('SidebarEnergyPanel', () => {
   test('renders the electricity cost row at the configured price', () => {
     const { container } = panel(meter(), true)
     expect(container.querySelector('[data-green-meter="cost"]')).not.toBeNull()
-    expect(screen.getByText('鐢佃垂')).toBeTruthy()
-    expect(screen.getByText('绾?楼0.0002')).toBeTruthy()
+    expect(screen.getByText('电费')).toBeTruthy()
+    expect(screen.getByText('约 ¥0.0002')).toBeTruthy()
   })
 
   test('hides the savings callout when nothing was cached', () => {
@@ -154,15 +157,14 @@ describe('SidebarEnergyPanel', () => {
 
   test('renders the budget rows', () => {
     panel({ ...meter(), budgetJ: 2_000_000 }, true)
-    expect(screen.getByText('棰勭畻 2.00 MJ锛堝凡鐢?0%锛?)).toBeTruthy()
+    expect(screen.getByText('预算 2.00 MJ（已用 0%）')).toBeTruthy()
     panel({ ...meter(), budgetJ: 1_000, energyJ: 1_500 }, true)
-    expect(screen.getByText('棰勭畻瓒呮敮锛屾柊姝ラ宸叉嫆缁?)).toBeTruthy()
+    expect(screen.getByText('预算超支，新步骤已拒绝')).toBeTruthy()
   })
 
   test('close dispatches the shared store action', () => {
-    const close = vi.fn()
-    panel(meter(), true, close)
-    fireEvent.click(screen.getByText('鍏抽棴'))
-    expect(close).toHaveBeenCalledTimes(1)
+    panel(meter(), true)
+    fireEvent.click(screen.getByText('关闭'))
+    expect(getPanelState().open).toBe(false)
   })
 })

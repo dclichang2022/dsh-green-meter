@@ -1,23 +1,23 @@
-/**
- * Shared viewing-state store for the green-meter surface: the composer-dock
- * readout toggles `open`, the sidebar energy panel renders while it is open.
- * One handle is constructed in `apply` and passed to BOTH registrations, so
- * the two entries share one instance (framework-constructed per entry only
- * when a factory is passed instead).
- */
-import { type EngineStoreHandle } from '@deepseek-ai/dsh-client-runtime/client';
-/** Store state: whether the sidebar energy panel is open. */
+import type { GreenMeterProjection } from '@deepseek-ai/dsh-green-meter/client';
+/** Store state: panel visibility plus the latest projection snapshot. */
 export type GreenMeterPanelState = {
     open: boolean;
-};
-/** Complete write set: toggle from the dock, close from the panel. */
-export type GreenMeterPanelActions = {
-    toggle: (draft: GreenMeterPanelState) => void;
-    close: (draft: GreenMeterPanelState) => void;
+    meter: GreenMeterProjection | null;
 };
 /**
- * Create the green-meter panel store handle.
- * @returns the store handle (spec + type + identity + factory in one).
+ * Subscribe to panel-state changes (useSyncExternalStore contract).
+ * @param listener - called after every state commit.
+ * @returns the unsubscriber.
  */
-export declare function createGreenMeterPanelStore(): EngineStoreHandle<GreenMeterPanelState, GreenMeterPanelActions>;
+export declare function subscribePanel(listener: () => void): () => void;
+/** Current panel state snapshot (stable between commits). */
+export declare function getPanelState(): GreenMeterPanelState;
+/** React subscription over the shared panel state. */
+export declare function usePanelState(): GreenMeterPanelState;
+/** Write set: toggle/close from the surfaces, setMeter from the dock. */
+export declare const panelActions: {
+    toggle: () => void;
+    close: () => void;
+    setMeter: (meter: GreenMeterProjection | null) => void;
+};
 //# sourceMappingURL=store.d.ts.map
