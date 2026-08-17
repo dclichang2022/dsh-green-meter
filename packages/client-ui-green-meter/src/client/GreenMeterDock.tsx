@@ -1,6 +1,5 @@
 /**
- * GreenMeterDock: the ambient energy/carbon readout under the composer card —
- * the totals label plus a per-turn energy bar sparkline. Clicking it toggles
+ * GreenMeterDock: the ambient energy/carbon readout under the composer card 鈥? * the totals label plus a per-turn energy bar sparkline. Clicking it toggles
  * the detail panel: `sidebar` placement renders it in the sidebar's
  * `sidebar.energy` seat, `popover` placement renders it as a floating card
  * above the readout (both share one panel store handle).
@@ -8,14 +7,15 @@
  * `undefined` = host green-meter unit not composed (render nothing); `null` =
  * no billable steps yet (the fallback state); otherwise the live values.
  */
+import { useEffect } from 'react'
 import type { PropsLocale, PropsRuntime, PropsStore } from '@deepseek-ai/dsh-client-ui-slots'
-import type { GreenMeterProjection, GreenMeterTurn } from '@deepseek-ai/dsh-green-meter/client'
+import type { GreenMeterProjection, GreenMeterTurn } from 'dsh-green-meter/client'
 import { EnergyPanelBody } from './SidebarEnergyPanel.tsx'
 import { createGreenMeterPanelStore } from './store.ts'
 import type { GreenMeterKey } from './locales.ts'
 import css from './GreenMeterDock.module.css'
 
-/** J → J/kJ/MJ, mirroring the /green report's energy formatting. */
+/** J 鈫?J/kJ/MJ, mirroring the /green report's energy formatting. */
 export function formatEnergy(joules: number): string {
   if (joules >= 1_000_000) return `${(joules / 1_000_000).toFixed(2)} MJ`
   if (joules >= 1_000) return `${(joules / 1_000).toFixed(1)} kJ`
@@ -27,7 +27,7 @@ export type GreenMeterDockProps =
   PropsRuntime<'conversation.composer.dock'>
   & PropsLocale<'greenMeter'>
   & PropsStore<ReturnType<typeof createGreenMeterPanelStore>>
-  & { placement: 'sidebar' | 'popover' }
+  & { placement: 'sidebar' | 'popover' | 'overlay' }
 
 /** One bar per turn, width 2px + 1px gap, normalized to the series max. */
 function bars(turns: readonly GreenMeterTurn[], barWidth: number, gap: number, height: number): React.JSX.Element[] {
@@ -49,9 +49,9 @@ function bars(turns: readonly GreenMeterTurn[], barWidth: number, gap: number, h
 
 /**
  * Inline SVG per-turn energy bars; renders nothing for an empty series.
- * The viewBox uses a FIXED slot grid (`maxTurns` slots × 3px) with bars
+ * The viewBox uses a FIXED slot grid (`maxTurns` slots 脳 3px) with bars
  * left-aligned from the first slot, so CSS stretching (panel charts use
- * width:100%) keeps bar proportions stable — a lone turn renders as one
+ * width:100%) keeps bar proportions stable 鈥?a lone turn renders as one
  * normal-width bar at the left edge.
  */
 export function EnergyBars({ turns, maxTurns, height = 14 }: { turns: readonly GreenMeterTurn[], maxTurns: number, height?: number }) {
@@ -89,6 +89,11 @@ export function PopoverPanel(
 export function GreenMeterDock({ useProjection, useStore, actions, placement, t }: GreenMeterDockProps) {
   const meter = useProjection('greenMeter') as GreenMeterProjection | null | undefined
   const open = useStore(state => state.open)
+  // Mirror the live snapshot into the shared store so root-scoped panel
+  // placements (the shell.overlay drawer) can render without session kit.
+  useEffect(() => {
+    actions.setMeter(meter ?? null)
+  }, [meter, actions])
   if (meter === undefined) return null
   if (meter === null) {
     return <div className={css.root} data-green-meter="empty">{t('empty')}</div>
@@ -97,7 +102,7 @@ export function GreenMeterDock({ useProjection, useStore, actions, placement, t 
     <div className={css.root} data-green-meter="live">
       <button className={css.trigger} onClick={() => { actions.toggle() }} data-green-meter="toggle">
         <span>{t('energy', { value: formatEnergy(meter.energyJ) })}</span>
-        <span className={css.sep} aria-hidden>·</span>
+        <span className={css.sep} aria-hidden>路</span>
         <span>{t('carbon', { value: meter.carbonG.toFixed(1) })}</span>
         <EnergyBars turns={meter.turns} maxTurns={40} />
       </button>

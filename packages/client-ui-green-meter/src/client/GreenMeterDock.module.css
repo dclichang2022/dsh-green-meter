@@ -75,6 +75,30 @@
   height: auto;
 }
 
+/* Overlay drawer panel: fixed to the right side of the frame, over the
+   blank details area (panelPlacement: 'overlay' — the zero-config default). */
+.overlayPanel {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  z-index: 40;
+  width: 264px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--dsw-border);
+  border-radius: 10px;
+  background: var(--dsw-surface);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+  color: var(--dsw-text-secondary);
+  white-space: normal;
+}
+
+.overlayPanel .spark {
+  width: 100%;
+  height: auto;
+}
+
 .panelHead {
   display: flex;
   align-items: center;

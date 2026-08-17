@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 /**
  * GreenMeterDock presentation behavior: the three projection states render
  * the empty/live/none states, energy formatting mirrors the /green report,
@@ -31,14 +31,14 @@ interface Mounted {
 
 function dock(
   value: GreenMeterProjection | null | undefined,
-  options: { toggle?: ReturnType<typeof vi.fn>, close?: ReturnType<typeof vi.fn>, open?: boolean, placement?: 'sidebar' | 'popover' } = {},
+  options: { toggle?: ReturnType<typeof vi.fn>, close?: ReturnType<typeof vi.fn>, setMeter?: ReturnType<typeof vi.fn>, open?: boolean, placement?: 'sidebar' | 'popover' | 'overlay' } = {},
 ): Mounted {
-  const { toggle = vi.fn(), close = vi.fn(), open = false, placement = 'sidebar' } = options
+  const { toggle = vi.fn(), close = vi.fn(), setMeter = vi.fn(), open = false, placement = 'sidebar' } = options
   const props = {
     t,
     useProjection: () => value,
     useStore: (selector: (state: { open: boolean }) => unknown) => selector({ open }),
-    actions: { toggle, close },
+    actions: { toggle, close, setMeter },
     placement,
   } as unknown as GreenMeterDockProps
   const { container } = render(<GreenMeterDock {...props} />)
@@ -81,11 +81,17 @@ describe('GreenMeterDock', () => {
       t,
       useProjection: () => undefined,
       useStore: (selector: (state: { open: boolean }) => unknown) => selector({ open: false }),
-      actions: { toggle: vi.fn(), close: vi.fn() },
+      actions: { toggle: vi.fn(), close: vi.fn(), setMeter: vi.fn() },
       placement: 'sidebar',
     } as unknown as GreenMeterDockProps
     const { container } = render(<GreenMeterDock {...props} />)
     expect(container.textContent).toBe('')
+  })
+
+  test('mirrors the live projection into the shared store', () => {
+    const setMeter = vi.fn()
+    dock(liveMeter(), { setMeter })
+    expect(setMeter).toHaveBeenCalledWith(liveMeter())
   })
 
   test('renders the empty state before the first billable step', () => {

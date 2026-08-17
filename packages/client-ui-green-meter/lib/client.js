@@ -4,10 +4,11 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+		let react = require("react");
 		let react_jsx_runtime = require("react/jsx-runtime");
 		let _deepseek_ai_dsh_client_runtime_client = require("@deepseek-ai/dsh-client-runtime/client");
 		//#region \0dsh-css:C:\Users\asus\Documents\Qoder\2026-08-13\chat-4\deepseek-harness\packages\client\ui-green-meter\src\client\GreenMeterDock.module.css.mjs
-		const css = ".RQwx2G_root{color:var(--dsw-text-tertiary);white-space:nowrap;align-items:center;gap:6px;font-size:12px;display:inline-flex;position:relative}.RQwx2G_trigger{font:inherit;color:inherit;cursor:pointer;background:0 0;border:none;align-items:center;gap:6px;padding:0;display:inline-flex}.RQwx2G_trigger:hover{color:var(--dsw-text-secondary)}.RQwx2G_sep{color:var(--dsw-text-quaternary)}.RQwx2G_spark{vertical-align:middle;opacity:.9;display:inline-block}.RQwx2G_spark rect{fill:currentColor}.RQwx2G_sidebarPanel{border:1px solid var(--dsw-border);background:var(--dsw-surface);color:var(--dsw-text-secondary);border-radius:8px;padding:10px 12px}.RQwx2G_sidebarPanel .RQwx2G_spark{width:100%;height:auto}.RQwx2G_popoverPanel{z-index:30;border:1px solid var(--dsw-border);background:var(--dsw-surface);width:260px;color:var(--dsw-text-secondary);white-space:normal;border-radius:8px;padding:10px 12px;position:absolute;bottom:calc(100% + 6px);left:0;box-shadow:0 8px 24px #0000001f}.RQwx2G_popoverPanel .RQwx2G_spark{width:100%;height:auto}.RQwx2G_panelHead{justify-content:space-between;align-items:center;margin-bottom:8px;display:flex}.RQwx2G_panelTitle{font-weight:600}.RQwx2G_close{color:var(--dsw-text-tertiary);cursor:pointer;background:0 0;border:none;border-radius:4px;padding:2px 6px;font-size:12px}.RQwx2G_close:hover{color:var(--dsw-text-primary)}.RQwx2G_panelChart{padding:4px 0 2px}.RQwx2G_chartLabels{color:var(--dsw-text-quaternary);justify-content:space-between;font-size:11px;display:flex}.RQwx2G_rows{gap:4px;margin:8px 0 0;display:grid}.RQwx2G_row{justify-content:space-between;gap:12px;display:flex}.RQwx2G_row dt{color:var(--dsw-text-tertiary)}.RQwx2G_row dd{color:var(--dsw-text-secondary);margin:0}.RQwx2G_budget{background:var(--dsw-surface-secondary);border-radius:6px;margin-top:8px;padding:6px 8px;font-size:12px}.RQwx2G_savings{background:#3c9e6d1a;border:1px solid #3c9e6d73;border-radius:6px;flex-direction:column;gap:2px;margin-top:8px;padding:6px 8px;font-size:12px;display:flex}.RQwx2G_savingsTitle{color:#2f8a5c;font-weight:600}.RQwx2G_savingsValue{color:var(--dsw-text-secondary)}.RQwx2G_requestList{border-top:1px solid var(--dsw-border);margin-top:10px;padding-top:8px}.RQwx2G_requestTitle{margin-bottom:4px;font-size:12px;font-weight:600}.RQwx2G_requestRows{max-height:150px;margin:0;padding:0;list-style:none;overflow-y:auto}.RQwx2G_requestRow{justify-content:space-between;gap:8px;padding:2px 0;font-size:11px;line-height:1.5;display:flex}.RQwx2G_requestLabel{color:var(--dsw-text-tertiary);white-space:nowrap}.RQwx2G_requestValue{color:var(--dsw-text-secondary);text-align:right}";
+		const css = ".RQwx2G_root{color:var(--dsw-text-tertiary);white-space:nowrap;align-items:center;gap:6px;font-size:12px;display:inline-flex;position:relative}.RQwx2G_trigger{font:inherit;color:inherit;cursor:pointer;background:0 0;border:none;align-items:center;gap:6px;padding:0;display:inline-flex}.RQwx2G_trigger:hover{color:var(--dsw-text-secondary)}.RQwx2G_sep{color:var(--dsw-text-quaternary)}.RQwx2G_spark{vertical-align:middle;opacity:.9;display:inline-block}.RQwx2G_spark rect{fill:currentColor}.RQwx2G_sidebarPanel{border:1px solid var(--dsw-border);background:var(--dsw-surface);color:var(--dsw-text-secondary);border-radius:8px;padding:10px 12px}.RQwx2G_sidebarPanel .RQwx2G_spark{width:100%;height:auto}.RQwx2G_popoverPanel{z-index:30;border:1px solid var(--dsw-border);background:var(--dsw-surface);width:260px;color:var(--dsw-text-secondary);white-space:normal;border-radius:8px;padding:10px 12px;position:absolute;bottom:calc(100% + 6px);left:0;box-shadow:0 8px 24px #0000001f}.RQwx2G_popoverPanel .RQwx2G_spark{width:100%;height:auto}.RQwx2G_overlayPanel{z-index:40;border:1px solid var(--dsw-border);background:var(--dsw-surface);width:264px;max-height:calc(100vh - 120px);color:var(--dsw-text-secondary);white-space:normal;border-radius:10px;padding:12px 14px;position:fixed;top:60px;right:16px;overflow-y:auto;box-shadow:0 12px 32px #0000002e}.RQwx2G_overlayPanel .RQwx2G_spark{width:100%;height:auto}.RQwx2G_panelHead{justify-content:space-between;align-items:center;margin-bottom:8px;display:flex}.RQwx2G_panelTitle{font-weight:600}.RQwx2G_close{color:var(--dsw-text-tertiary);cursor:pointer;background:0 0;border:none;border-radius:4px;padding:2px 6px;font-size:12px}.RQwx2G_close:hover{color:var(--dsw-text-primary)}.RQwx2G_panelChart{padding:4px 0 2px}.RQwx2G_chartLabels{color:var(--dsw-text-quaternary);justify-content:space-between;font-size:11px;display:flex}.RQwx2G_rows{gap:4px;margin:8px 0 0;display:grid}.RQwx2G_row{justify-content:space-between;gap:12px;display:flex}.RQwx2G_row dt{color:var(--dsw-text-tertiary)}.RQwx2G_row dd{color:var(--dsw-text-secondary);margin:0}.RQwx2G_budget{background:var(--dsw-surface-secondary);border-radius:6px;margin-top:8px;padding:6px 8px;font-size:12px}.RQwx2G_savings{background:#3c9e6d1a;border:1px solid #3c9e6d73;border-radius:6px;flex-direction:column;gap:2px;margin-top:8px;padding:6px 8px;font-size:12px;display:flex}.RQwx2G_savingsTitle{color:#2f8a5c;font-weight:600}.RQwx2G_savingsValue{color:var(--dsw-text-secondary)}.RQwx2G_requestList{border-top:1px solid var(--dsw-border);margin-top:10px;padding-top:8px}.RQwx2G_requestTitle{margin-bottom:4px;font-size:12px;font-weight:600}.RQwx2G_requestRows{max-height:150px;margin:0;padding:0;list-style:none;overflow-y:auto}.RQwx2G_requestRow{justify-content:space-between;gap:8px;padding:2px 0;font-size:11px;line-height:1.5;display:flex}.RQwx2G_requestLabel{color:var(--dsw-text-tertiary);white-space:nowrap}.RQwx2G_requestValue{color:var(--dsw-text-secondary);text-align:right}";
 		const tagId = "@deepseek-ai/dsh-client-ui-green-meter/GreenMeterDock.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -17,29 +18,30 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var GreenMeterDock_module_css_default = {
-			"savings": "RQwx2G_savings",
-			"requestTitle": "RQwx2G_requestTitle",
-			"root": "RQwx2G_root",
-			"savingsTitle": "RQwx2G_savingsTitle",
-			"close": "RQwx2G_close",
-			"savingsValue": "RQwx2G_savingsValue",
-			"popoverPanel": "RQwx2G_popoverPanel",
-			"requestRows": "RQwx2G_requestRows",
-			"panelChart": "RQwx2G_panelChart",
-			"rows": "RQwx2G_rows",
-			"sidebarPanel": "RQwx2G_sidebarPanel",
-			"chartLabels": "RQwx2G_chartLabels",
-			"requestRow": "RQwx2G_requestRow",
-			"sep": "RQwx2G_sep",
-			"panelTitle": "RQwx2G_panelTitle",
-			"spark": "RQwx2G_spark",
+			"row": "RQwx2G_row",
 			"budget": "RQwx2G_budget",
 			"requestLabel": "RQwx2G_requestLabel",
-			"trigger": "RQwx2G_trigger",
-			"requestValue": "RQwx2G_requestValue",
+			"sep": "RQwx2G_sep",
+			"popoverPanel": "RQwx2G_popoverPanel",
+			"savings": "RQwx2G_savings",
+			"close": "RQwx2G_close",
+			"spark": "RQwx2G_spark",
+			"chartLabels": "RQwx2G_chartLabels",
+			"requestRows": "RQwx2G_requestRows",
+			"savingsValue": "RQwx2G_savingsValue",
+			"root": "RQwx2G_root",
+			"overlayPanel": "RQwx2G_overlayPanel",
+			"requestTitle": "RQwx2G_requestTitle",
 			"panelHead": "RQwx2G_panelHead",
+			"trigger": "RQwx2G_trigger",
+			"requestRow": "RQwx2G_requestRow",
+			"sidebarPanel": "RQwx2G_sidebarPanel",
+			"panelTitle": "RQwx2G_panelTitle",
 			"requestList": "RQwx2G_requestList",
-			"row": "RQwx2G_row"
+			"requestValue": "RQwx2G_requestValue",
+			"panelChart": "RQwx2G_panelChart",
+			"savingsTitle": "RQwx2G_savingsTitle",
+			"rows": "RQwx2G_rows"
 		};
 		//#endregion
 		//#region src/client/SidebarEnergyPanel.tsx
@@ -205,6 +207,16 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region src/client/GreenMeterDock.tsx
+		/**
+		* GreenMeterDock: the ambient energy/carbon readout under the composer card —
+		* the totals label plus a per-turn energy bar sparkline. Clicking it toggles
+		* the detail panel: `sidebar` placement renders it in the sidebar's
+		* `sidebar.energy` seat, `popover` placement renders it as a floating card
+		* above the readout (both share one panel store handle).
+		*
+		* `undefined` = host green-meter unit not composed (render nothing); `null` =
+		* no billable steps yet (the fallback state); otherwise the live values.
+		*/
 		/** J → J/kJ/MJ, mirroring the /green report's energy formatting. */
 		function formatEnergy(joules) {
 			if (joules >= 1e6) return `${(joules / 1e6).toFixed(2)} MJ`;
@@ -275,6 +287,9 @@ window.__ModuleLoader__.load({
 		function GreenMeterDock({ useProjection, useStore, actions, placement, t }) {
 			const meter = useProjection("greenMeter");
 			const open = useStore((state) => state.open);
+			(0, react.useEffect)(() => {
+				actions.setMeter(meter ?? null);
+			}, [meter, actions]);
 			if (meter === void 0) return null;
 			if (meter === null) return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: GreenMeterDock_module_css_default.root,
@@ -313,13 +328,44 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
+		//#region src/client/OverlayEnergyPanel.tsx
+		/** The overlay drawer panel; closed/absent states render nothing. */
+		function OverlayEnergyPanel({ useStore, actions, t }) {
+			const open = useStore((state) => state.open);
+			const meter = useStore((state) => state.meter);
+			if (!open || meter === null) return null;
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: GreenMeterDock_module_css_default.overlayPanel,
+				"data-green-meter": "overlay-panel",
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					className: GreenMeterDock_module_css_default.panelHead,
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: GreenMeterDock_module_css_default.panelTitle,
+						children: t("panelTitle")
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+						className: GreenMeterDock_module_css_default.close,
+						onClick: () => {
+							actions.close();
+						},
+						"data-green-meter": "close",
+						children: t("close")
+					})]
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(EnergyPanelBody, {
+					meter,
+					t
+				})]
+			});
+		}
+		//#endregion
 		//#region src/client/store.ts
 		/**
 		* Shared viewing-state store for the green-meter surface: the composer-dock
-		* readout toggles `open`, the sidebar energy panel renders while it is open.
-		* One handle is constructed in `apply` and passed to BOTH registrations, so
-		* the two entries share one instance (framework-constructed per entry only
-		* when a factory is passed instead).
+		* readout toggles `open` and mirrors the live projection snapshot into
+		* `meter` (the dock is session-scoped and owns the `useProjection` read), so
+		* root-scoped panel placements (the `shell.overlay` drawer) can render the
+		* detail panel without their own session kit. One handle is constructed in
+		* `apply` and passed to ALL registrations, so every surface shares one
+		* instance.
 		*/
 		/**
 		* Create the green-meter panel store handle.
@@ -327,13 +373,19 @@ window.__ModuleLoader__.load({
 		*/
 		function createGreenMeterPanelStore() {
 			return (0, _deepseek_ai_dsh_client_runtime_client.defineStore)({
-				init: () => ({ open: false }),
+				init: () => ({
+					open: false,
+					meter: null
+				}),
 				actions: {
 					toggle: (draft) => {
 						draft.open = !draft.open;
 					},
 					close: (draft) => {
 						draft.open = false;
+					},
+					setMeter: (draft, meter) => {
+						draft.meter = meter;
 					}
 				}
 			});
@@ -398,14 +450,14 @@ window.__ModuleLoader__.load({
 		* Client plugin body: the composer-dock readout and the detail panel.
 		* `slots.inject` waits on each owner's declaration (apply order is
 		* unconstrained) and leaves with this plugin's fiber. One shared store handle
-		* carries the open/closed state across both surfaces.
+		* carries the open/closed state and the live snapshot across all surfaces.
 		*/
 		function apply(ctx, config = {}) {
 			ctx.effect(() => ctx.locale.register(NS, {
 				zh,
 				en
 			}), "ui-green-meter: dictionaries");
-			const placement = config.panelPlacement ?? "sidebar";
+			const placement = config.panelPlacement ?? "overlay";
 			const panelStore = createGreenMeterPanelStore();
 			ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({
 				name: "conversation.composer.dock",
@@ -420,6 +472,12 @@ window.__ModuleLoader__.load({
 				locale: NS,
 				store: panelStore
 			}, SidebarEnergyPanel));
+			if (placement === "overlay") ctx.slots.inject("shell.overlay", () => ctx.slots.register({
+				name: "shell.overlay",
+				id: "green-meter",
+				locale: NS,
+				store: panelStore
+			}, OverlayEnergyPanel));
 		}
 		//#endregion
 		exports.apply = apply;
