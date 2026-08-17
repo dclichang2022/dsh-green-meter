@@ -1,1 +1,91 @@
-diff --git a/packages/client/ui-sidebar/src/client/SidebarRoot.module.css b/packages/client/ui-sidebar/src/client/SidebarRoot.module.css index 300075b88d..842f406f74 100644 --- a/packages/client/ui-sidebar/src/client/SidebarRoot.module.css +++ b/packages/client/ui-sidebar/src/client/SidebarRoot.module.css @@ -241,6 +241,19 @@    padding-left: 0;  }   +/* Optional energy panel seat between the region and the foot. Shrinks with +   the column and hides in the collapsed rail (wide-only content). */ +.energyArea { +  flex: none; +  min-width: 0; +  width: 100%; +  margin-bottom: 8px; +} + +.collapsed .energyArea { +  display: none; +} +  /* Footer seats: additive actions stack above Settings. Each occupant owns its     button geometry and hover chrome. */  .footArea { @@ -277,7 +290,8 @@    .railIn .iconButton,    .railIn .newSession,    .railIn .footArea, -  .railIn .regionArea { +  .railIn .regionArea, +  .railIn .energyArea {      transition: none;      animation: none;    } diff --git a/packages/client/ui-sidebar/src/client/SidebarRoot.tsx b/packages/client/ui-sidebar/src/client/SidebarRoot.tsx index d3fe6a63c1..fe4c7e0a5d 100644 --- a/packages/client/ui-sidebar/src/client/SidebarRoot.tsx +++ b/packages/client/ui-sidebar/src/client/SidebarRoot.tsx @@ -178,6 +178,15 @@ export function SidebarRoot({          })}        </div>   +      {/* Optional energy panel seat between the browsing region and the foot +          (the green-meter detail panel registers here). */} +      <div className={css.energyArea}> +        {renderSlot('sidebar.energy', { +          wide, +          expandSidebar: () => { if (collapsed) toggleSidebar() }, +        })} +      </div> +        {/* Footer actions stack above Settings in both sidebar widths. */}        <div className={css.footArea}>          <div className={css.footerActions}> diff --git a/packages/client/ui-sidebar/src/client/contract/slots.ts b/packages/client/ui-sidebar/src/client/contract/slots.ts index a8c4f2894d..5ceecc094f 100644 --- a/packages/client/ui-sidebar/src/client/contract/slots.ts +++ b/packages/client/ui-sidebar/src/client/contract/slots.ts @@ -33,6 +33,13 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {       * package's 'sidebar' entry; each action receives only the column state.       */      'sidebar.footer.action': { kind: 'list'; scope: 'root'; owner: SidebarFooterActionOwnerProps } +    /** +     * Optional energy/carbon panel seat between the browsing region and the +     * foot. Session-scoped so occupants receive the current-session kit +     * (`sessionId` + `useProjection`); renders only while a session is +     * current, mirroring the layout `details` column semantics. +     */ +    'sidebar.energy': { kind: 'single'; scope: 'session'; owner: SidebarSectionOwnerProps }    }  }   @@ -85,5 +92,5 @@ export type SidebarRootInjected = {   */  export type SidebarRootComponentProps =    PropsRuntime<'sidebar'> -  & PropsRenderSlots<'sidebar.workspaces' | 'sidebar.settings' | 'sidebar.footer.action'> +  & PropsRenderSlots<'sidebar.workspaces' | 'sidebar.settings' | 'sidebar.footer.action' | 'sidebar.energy'>    & SidebarRootInjected & PropsLocale<'sidebar'> diff --git a/packages/client/ui-sidebar/src/client/index.ts b/packages/client/ui-sidebar/src/client/index.ts index 0bd2c98295..64f75c5277 100644 --- a/packages/client/ui-sidebar/src/client/index.ts +++ b/packages/client/ui-sidebar/src/client/index.ts @@ -48,6 +48,7 @@ export function apply(ctx: ClientContext): void {          'sidebar.workspaces': { kind: 'single', scope: 'root' },          'sidebar.settings': { kind: 'single', scope: 'root' },          'sidebar.footer.action': { kind: 'list', scope: 'root' }, +        'sidebar.energy': { kind: 'single', scope: 'session' },        },        inject: injectProps,      }, SidebarRoot), 
+diff --git a/packages/client/ui-sidebar/src/client/SidebarRoot.module.css b/packages/client/ui-sidebar/src/client/SidebarRoot.module.css
+index 300075b88d..842f406f74 100644
+--- a/packages/client/ui-sidebar/src/client/SidebarRoot.module.css
++++ b/packages/client/ui-sidebar/src/client/SidebarRoot.module.css
+@@ -241,6 +241,19 @@
+   padding-left: 0;
+ }
+ 
++/* Optional energy panel seat between the region and the foot. Shrinks with
++   the column and hides in the collapsed rail (wide-only content). */
++.energyArea {
++  flex: none;
++  min-width: 0;
++  width: 100%;
++  margin-bottom: 8px;
++}
++
++.collapsed .energyArea {
++  display: none;
++}
++
+ /* Footer seats: additive actions stack above Settings. Each occupant owns its
+    button geometry and hover chrome. */
+ .footArea {
+@@ -277,7 +290,8 @@
+   .railIn .iconButton,
+   .railIn .newSession,
+   .railIn .footArea,
+-  .railIn .regionArea {
++  .railIn .regionArea,
++  .railIn .energyArea {
+     transition: none;
+     animation: none;
+   }
+diff --git a/packages/client/ui-sidebar/src/client/SidebarRoot.tsx b/packages/client/ui-sidebar/src/client/SidebarRoot.tsx
+index d3fe6a63c1..fe4c7e0a5d 100644
+--- a/packages/client/ui-sidebar/src/client/SidebarRoot.tsx
++++ b/packages/client/ui-sidebar/src/client/SidebarRoot.tsx
+@@ -178,6 +178,15 @@ export function SidebarRoot({
+         })}
+       </div>
+ 
++      {/* Optional energy panel seat between the browsing region and the foot
++          (the green-meter detail panel registers here). */}
++      <div className={css.energyArea}>
++        {renderSlot('sidebar.energy', {
++          wide,
++          expandSidebar: () => { if (collapsed) toggleSidebar() },
++        })}
++      </div>
++
+       {/* Footer actions stack above Settings in both sidebar widths. */}
+       <div className={css.footArea}>
+         <div className={css.footerActions}>
+diff --git a/packages/client/ui-sidebar/src/client/contract/slots.ts b/packages/client/ui-sidebar/src/client/contract/slots.ts
+index a8c4f2894d..5ceecc094f 100644
+--- a/packages/client/ui-sidebar/src/client/contract/slots.ts
++++ b/packages/client/ui-sidebar/src/client/contract/slots.ts
+@@ -33,6 +33,13 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
+      * package's 'sidebar' entry; each action receives only the column state.
+      */
+     'sidebar.footer.action': { kind: 'list'; scope: 'root'; owner: SidebarFooterActionOwnerProps }
++    /**
++     * Optional energy/carbon panel seat between the browsing region and the
++     * foot. Session-scoped so occupants receive the current-session kit
++     * (`sessionId` + `useProjection`); renders only while a session is
++     * current, mirroring the layout `details` column semantics.
++     */
++    'sidebar.energy': { kind: 'single'; scope: 'session'; owner: SidebarSectionOwnerProps }
+   }
+ }
+ 
+@@ -85,5 +92,5 @@ export type SidebarRootInjected = {
+  */
+ export type SidebarRootComponentProps =
+   PropsRuntime<'sidebar'>
+-  & PropsRenderSlots<'sidebar.workspaces' | 'sidebar.settings' | 'sidebar.footer.action'>
++  & PropsRenderSlots<'sidebar.workspaces' | 'sidebar.settings' | 'sidebar.footer.action' | 'sidebar.energy'>
+   & SidebarRootInjected & PropsLocale<'sidebar'>
+diff --git a/packages/client/ui-sidebar/src/client/index.ts b/packages/client/ui-sidebar/src/client/index.ts
+index 0bd2c98295..64f75c5277 100644
+--- a/packages/client/ui-sidebar/src/client/index.ts
++++ b/packages/client/ui-sidebar/src/client/index.ts
+@@ -48,6 +48,7 @@ export function apply(ctx: ClientContext): void {
+         'sidebar.workspaces': { kind: 'single', scope: 'root' },
+         'sidebar.settings': { kind: 'single', scope: 'root' },
+         'sidebar.footer.action': { kind: 'list', scope: 'root' },
++        'sidebar.energy': { kind: 'single', scope: 'session' },
+       },
+       inject: injectProps,
+     }, SidebarRoot),
