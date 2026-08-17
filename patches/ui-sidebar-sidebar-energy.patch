@@ -2,9 +2,7 @@ diff --git a/packages/client/ui-sidebar/src/client/SidebarRoot.module.css b/pack
 index 300075b88d..842f406f74 100644
 --- a/packages/client/ui-sidebar/src/client/SidebarRoot.module.css
 +++ b/packages/client/ui-sidebar/src/client/SidebarRoot.module.css
-@@ -241,6 +241,19 @@
-   padding-left: 0;
- }
+@@ -243,2 +243,15 @@
  
 +/* Optional energy panel seat between the region and the foot. Shrinks with
 +   the column and hides in the collapsed rail (wide-only content). */
@@ -20,25 +18,17 @@ index 300075b88d..842f406f74 100644
 +}
 +
  /* Footer seats: additive actions stack above Settings. Each occupant owns its
-    button geometry and hover chrome. */
- .footArea {
-@@ -277,7 +290,8 @@
-   .railIn .iconButton,
-   .railIn .newSession,
+@@ -279,3 +292,4 @@
    .railIn .footArea,
 -  .railIn .regionArea {
 +  .railIn .regionArea,
 +  .railIn .energyArea {
      transition: none;
-     animation: none;
-   }
 diff --git a/packages/client/ui-sidebar/src/client/SidebarRoot.tsx b/packages/client/ui-sidebar/src/client/SidebarRoot.tsx
 index d3fe6a63c1..fe4c7e0a5d 100644
 --- a/packages/client/ui-sidebar/src/client/SidebarRoot.tsx
 +++ b/packages/client/ui-sidebar/src/client/SidebarRoot.tsx
-@@ -178,6 +178,15 @@ export function SidebarRoot({
-         })}
-       </div>
+@@ -180,2 +180,11 @@ export function SidebarRoot({
  
 +      {/* Optional energy panel seat between the browsing region and the foot
 +          (the green-meter detail panel registers here). */}
@@ -50,15 +40,11 @@ index d3fe6a63c1..fe4c7e0a5d 100644
 +      </div>
 +
        {/* Footer actions stack above Settings in both sidebar widths. */}
-       <div className={css.footArea}>
-         <div className={css.footerActions}>
 diff --git a/packages/client/ui-sidebar/src/client/contract/slots.ts b/packages/client/ui-sidebar/src/client/contract/slots.ts
 index a8c4f2894d..5ceecc094f 100644
 --- a/packages/client/ui-sidebar/src/client/contract/slots.ts
 +++ b/packages/client/ui-sidebar/src/client/contract/slots.ts
-@@ -33,6 +33,13 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
-      * package's 'sidebar' entry; each action receives only the column state.
-      */
+@@ -35,2 +35,9 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
      'sidebar.footer.action': { kind: 'list'; scope: 'root'; owner: SidebarFooterActionOwnerProps }
 +    /**
 +     * Optional energy/carbon panel seat between the browsing region and the
@@ -68,11 +54,7 @@ index a8c4f2894d..5ceecc094f 100644
 +     */
 +    'sidebar.energy': { kind: 'single'; scope: 'session'; owner: SidebarSectionOwnerProps }
    }
- }
- 
-@@ -85,5 +92,5 @@ export type SidebarRootInjected = {
-  */
- export type SidebarRootComponentProps =
+@@ -87,3 +94,3 @@ export type SidebarRootComponentProps =
    PropsRuntime<'sidebar'>
 -  & PropsRenderSlots<'sidebar.workspaces' | 'sidebar.settings' | 'sidebar.footer.action'>
 +  & PropsRenderSlots<'sidebar.workspaces' | 'sidebar.settings' | 'sidebar.footer.action' | 'sidebar.energy'>
@@ -81,11 +63,7 @@ diff --git a/packages/client/ui-sidebar/src/client/index.ts b/packages/client/ui
 index 0bd2c98295..64f75c5277 100644
 --- a/packages/client/ui-sidebar/src/client/index.ts
 +++ b/packages/client/ui-sidebar/src/client/index.ts
-@@ -48,6 +48,7 @@ export function apply(ctx: ClientContext): void {
-         'sidebar.workspaces': { kind: 'single', scope: 'root' },
-         'sidebar.settings': { kind: 'single', scope: 'root' },
+@@ -50,2 +50,3 @@ export function apply(ctx: ClientContext): void {
          'sidebar.footer.action': { kind: 'list', scope: 'root' },
 +        'sidebar.energy': { kind: 'single', scope: 'session' },
        },
-       inject: injectProps,
-     }, SidebarRoot),

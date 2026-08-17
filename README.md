@@ -13,7 +13,7 @@ Install it, chat as usual, and watch your session's energy bill in real time.
 | Surface | What you see |
 |---|---|
 | **Composer dock** (always visible under the input box) | live `能耗 1.5 kJ · 碳 0.2 g` readout + per-turn energy sparkline |
-| **Detail panel** (click the readout) | per-turn energy chart, per-request energy list, session totals (tokens / energy / carbon / **electricity cost**), **carbon saved by caching ≈ N trees per year** |
+| **Detail panel** (click the readout) | floating draggable drawer with per-turn energy chart, per-request energy list, session totals (tokens / energy / carbon / **electricity cost**), **carbon saved by caching ≈ N trees per year** |
 | **`/green`** | one-command session energy report |
 | **`green_meter` tool** | the agent can query its own energy, carbon, cost and budget at any time |
 | **Energy budget** | optional per-session budget — over-budget steps are rejected with a warning |
@@ -37,20 +37,41 @@ pnpm add dsh-green-meter dsh-client-ui-green-meter
     - id: ui-green-meter
       name: 'dsh-client-ui-green-meter'
       config:
-        panelPlacement: popover   # popover = zero-config; sidebar = optional patch
+        panelPlacement: overlay   # overlay (default) = floating draggable drawer, zero-config
 ```
 
 Restart `dsh web`, refresh, and the readout appears under the composer. Type `/green` anytime.
 
-### Full experience: sidebar panel (optional)
+The detail panel opens as a floating drawer you can drag anywhere — no changes
+to the DeepSeek Harness repo are needed. `panelPlacement` can be omitted
+(`overlay` is the default); `popover` is another patch-free option.
 
-`panelPlacement: sidebar` renders the detail panel inside the sidebar's blank space. Apply the provided patch and rebuild one DSH package:
+### Sidebar panel (optional, needs a one-time DSH edit)
+
+`panelPlacement: sidebar` renders the detail panel inside the sidebar's blank
+space. Skip this section if the drawer above is enough — it is the recommended
+setup. The seat needs one small addition to `packages/client/ui-sidebar`
+(everything else stays untouched). Two ways, pick one:
+
+**A. Patch (fresh checkout of deepseek-harness)**
 
 ```bash
 cd /path/to/deepseek-harness
 git apply /path/to/dsh-green-meter/patches/ui-sidebar-sidebar-energy.patch
 pnpm --filter @deepseek-ai/dsh-client-ui-sidebar bundle
 ```
+
+**B. Anchor-based installer (any version; use this when `git apply` fails)**
+
+```powershell
+cd /path/to/deepseek-harness
+powershell -ExecutionPolicy Bypass -File /path/to/dsh-green-meter/patches/apply-sidebar-energy.ps1
+pnpm --filter @deepseek-ai/dsh-client-ui-sidebar bundle
+```
+
+The installer edits by unique code anchors (no line numbers), so it works even
+when the patch's context no longer matches your checkout, and it is idempotent
+— running it twice is safe.
 
 ## ⚙️ Configuration
 

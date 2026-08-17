@@ -18,12 +18,13 @@
         budgetJ: 0
 
     # Browser surface: composer-dock readout + detail panel.
-    # panelPlacement: 'popover' works on any vanilla install; 'sidebar' needs
-    # the ui-sidebar patch from patches/ui-sidebar-sidebar-energy.patch.
+    # panelPlacement: 'overlay' (default) = floating draggable drawer, works on
+    # any vanilla install; 'popover' = patch-free card above the readout;
+    # 'sidebar' = seat inside the sidebar, needs the ui-sidebar patch (patches/).
     - id: ui-green-meter
       name: 'dsh-client-ui-green-meter'
       config:
-        panelPlacement: popover
+        panelPlacement: overlay
 
 # ── Format B (flat entry list, no wrapper) ────────────────────────────────
 # Uncomment this block instead if your dsh version rejects Format A:
@@ -38,4 +39,4 @@
 # - id: ui-green-meter
 #   name: 'dsh-client-ui-green-meter'
 #   config:
-#     panelPlacement: popover
+#     panelPlacement: overlay
