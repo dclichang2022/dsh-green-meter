@@ -1,0 +1,15 @@
+node_modules/
+dist/
+tmp/
+logs/
+*.log
+
+# Generated harness runtime (built by `npm run pack:harness`)
+resources/harness/node_modules/
+resources/harness/package-lock.json
+# App data created at runtime (sessions, credentials, ledger, settings)
+resources/harness/dsh-home/
+
+# Bundled Node runtime — copy your node.exe here (see README)
+resources/runtime/*
+!resources/runtime/.gitkeep

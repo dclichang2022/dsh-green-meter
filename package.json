@@ -1,0 +1,60 @@
+{
+  "name": "green-dsh-desktop",
+  "version": "0.1.3",
+  "description": "Green DSH Desktop — DeepSeek Harness 桌面版，内置 green-meter 碳排/省钱仪表盘（FreeToken 风格）",
+  "main": "electron/main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win",
+    "pack:harness": "node scripts/build-harness.mjs",
+    "vendor:plugins": "node scripts/vendor-plugins.mjs"
+  },
+  "devDependencies": {
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "org.green-dsh.desktop",
+    "productName": "Green DSH Desktop",
+    "asar": true,
+    "asarUnpack": [
+      "resources/harness/**/*",
+      "resources/runtime/**/*"
+    ],
+    "files": [
+      "electron/**/*",
+      "console/**/*",
+      "resources/harness/**/*",
+      "resources/runtime/**/*",
+      "!**/*.map",
+      "!resources/harness/**/*.map"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Green DSH Desktop",
+      "include": "build/installer.nsh"
+    }
+  }
+}

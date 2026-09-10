@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'" />
+  <title>Green DSH Desktop — 控制台</title>
+  <link rel="stylesheet" href="console.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="status-pill" id="pill-harness"><i class="dot"></i><span>Harness</span></span>
+      <span class="status-pill" id="pill-ledger"><i class="dot"></i><span>台账</span></span>
+      <span class="status-pill" id="pill-gpu"><i class="dot"></i><span>GPU</span></span>
+      <span class="status-pill" id="pill-relay"><i class="dot"></i><span>中转站</span></span>
+    </div>
+    <div class="topbar-title">Green DSH Desktop · 能耗碳排控制台</div>
+    <div class="topbar-right">
+      <span class="alert-pill" id="alert-pill">预警 0</span>
+      <span class="saved-pill" id="saved-pill">已省 ¥0.00</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="nav-group">
+        <button class="nav-item active" data-page="overview">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h5v5H2zM9 2h5v3H9zM9 7h5v7H9zM2 9h5v5H2z"/></svg>
+          <span>控制台</span>
+        </button>
+        <button class="nav-item" data-page="sessions">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3h12v7H8l-3 3v-3H2z"/></svg>
+          <span>会话</span>
+        </button>
+        <button class="nav-item" data-page="hardware">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3h12v8H2zM5 13h6v1H5z"/></svg>
+          <span>硬件监测</span>
+        </button>
+        <button class="nav-item" data-page="alerts">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 14 13H2zM7.3 6h1.4v4H7.3zm0 5h1.4v1.3H7.3z"/></svg>
+          <span>预警</span>
+          <span class="nav-badge" id="nav-alert-badge" hidden>0</span>
+        </button>
+        <button class="nav-item" data-page="sources">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zm0 1.4a4.6 4.6 0 0 1 4.6 4.6H8z"/></svg>
+          <span>数据源</span>
+        </button>
+        <button class="nav-item" data-page="reference">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h7l3 3v9H3zm2 5h6v1H5zm0 3h6v1H5z"/></svg>
+          <span>参考数据</span>
+        </button>
+        <button class="nav-item" data-page="ledger">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h8l2 2v10H3zM5 6h6v1H5zM5 9h6v1H5z"/></svg>
+          <span>碳台账</span>
+        </button>
+        <button class="nav-item" data-page="logs">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3h12v10H2zM4 5h8v1H4zM4 8h8v1H4zM4 11h5v1H4z"/></svg>
+          <span>日志</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 5.5A2.5 2.5 0 1 0 8 10.5 2.5 2.5 0 0 0 8 5.5zm6 2.5-1.6-.3-.3-.8.9-1.3-1.1-1.1-1.3.9-.8-.3L9 3H7l-.3 1.6-.8.3-1.3-.9L3.5 5.1l.9 1.3-.3.8L2.5 8v2l1.6.3.3.8-.9 1.3 1.1 1.1 1.3-.9.8.3L7 14h2l.3-1.6.8-.3 1.3.9 1.1-1.1-.9-1.3.3-.8L14 10z"/></svg>
+          <span>设置</span>
+        </button>
+      </div>
+      <div class="nav-group nav-group-bottom">
+        <button class="nav-item nav-chat" id="open-chat">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h12v9H7l-3 3v-3H2z"/></svg>
+          <span>打开对话</span>
+        </button>
+      </div>
+      <div class="side-meters" id="side-meters">
+        <div class="side-meter" id="side-gpu" hidden>
+          <div class="side-meter-head"><span>系统显存</span><span id="side-gpu-text">—</span></div>
+          <div class="side-bar"><i id="side-gpu-bar" style="width:0%"></i></div>
+        </div>
+        <div class="side-meter">
+          <div class="side-meter-head"><span>系统内存</span><span id="side-mem-text">—</span></div>
+          <div class="side-bar"><i id="side-mem-bar" style="width:0%"></i></div>
+        </div>
+        <div class="side-meter">
+          <div class="side-meter-head"><span>CPU 使用率</span><span id="side-cpu-text">—</span></div>
+          <div class="side-bar"><i id="side-cpu-bar" style="width:0%"></i></div>
+        </div>
+        <div class="side-device" id="side-device">—</div>
+        <div class="side-version" id="side-version">v0.1.0</div>
+      </div>
+    </nav>
+
+    <main class="content" id="content">
+      <!-- 控制台 -->
+      <section class="page" data-page="overview">
+        <div class="page-head">
+          <h1>控制台</h1>
+          <p class="page-sub" id="overview-sub">监测中 · 每 2 秒刷新</p>
+        </div>
+        <div class="stat-grid">
+          <article class="card stat">
+            <div class="stat-label">本地碳排</div>
+            <div class="stat-value" id="stat-carbon">0 g CO₂e</div>
+            <div class="stat-caption" id="stat-carbon-cap">口径：台账估算</div>
+          </article>
+          <article class="card stat">
+            <div class="stat-label">本地能耗</div>
+            <div class="stat-value" id="stat-energy">0 J</div>
+            <div class="stat-caption" id="stat-energy-cap">0 kWh · 电费 ¥0.00</div>
+          </article>
+          <article class="card stat">
+            <div class="stat-label">云端碳排（公开系数估算）</div>
+            <div class="stat-value" id="stat-cloud-carbon">0 g CO₂e</div>
+            <div class="stat-caption" id="stat-cloud-carbon-cap">—</div>
+          </article>
+          <article class="card stat stat-accent">
+            <div class="stat-label">已省 API 费用</div>
+            <div class="stat-value" id="stat-saved-cny">¥0.00</div>
+            <div class="stat-caption" id="stat-saved-cny-cap">API 牌价 ¥0.00 − 本地电费 ¥0.00</div>
+          </article>
+        </div>
+
+        <div class="stat-grid stat-grid-3">
+          <article class="card stat">
+            <div class="stat-label">已处理 Token</div>
+            <div class="stat-value" id="stat-tokens">0</div>
+            <div class="stat-caption" id="stat-tokens-cap">输入 0 · 输出 0</div>
+          </article>
+          <article class="card stat">
+            <div class="stat-label">请求 / 会话</div>
+            <div class="stat-value" id="stat-requests">0</div>
+            <div class="stat-caption" id="stat-requests-cap">0 个会话</div>
+          </article>
+          <article class="card stat">
+            <div class="stat-label">缓存命中省碳</div>
+            <div class="stat-value" id="stat-cache-carbon">0 g CO₂e</div>
+            <div class="stat-caption" id="stat-cache-carbon-cap">0 个缓存 token 免于重算</div>
+          </article>
+        </div>
+
+        <article class="card chart-card">
+          <div class="card-head">
+            <h2>近 30 天碳排</h2>
+            <span class="card-note" id="daily-note">—</span>
+          </div>
+          <div class="chart" id="daily-chart"></div>
+        </article>
+
+        <article class="card chart-card">
+          <div class="card-head">
+            <h2>按任务轮次碳排</h2>
+            <div class="btn-row">
+              <select class="mini-select" id="turn-session"></select>
+              <span class="card-note" id="turn-note">—</span>
+            </div>
+          </div>
+          <div class="chart" id="turn-chart"></div>
+          <p class="method-note" id="turn-hint">按轮次统计碳排：轮次越靠后，上下文越长，通常碳排越高（同一会话内 T1→Tn）。</p>
+          <div class="table-wrap" style="max-height: 220px">
+            <table class="table" id="turn-table">
+              <thead><tr><th>轮次</th><th>步数</th><th>碳排</th><th>能耗</th><th>输出 token</th><th>会话数</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+
+        <div class="card-row">
+          <article class="card">
+            <div class="card-head"><h2>最近请求</h2><span class="card-note" id="recent-note">—</span></div>
+            <div class="table-wrap">
+              <table class="table" id="recent-table">
+                <thead><tr><th>时间</th><th>会话</th><th>轮次</th><th>输入</th><th>输出</th><th>能耗</th><th>碳排</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-head"><h2>硬件</h2><span class="card-note">实时采样</span></div>
+            <div class="ring-grid" id="overview-rings"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 会话 -->
+      <section class="page" data-page="sessions" hidden>
+        <div class="page-head">
+          <h1>会话</h1>
+          <p class="page-sub">每个会话的碳排与费用，按最近活动排序</p>
+        </div>
+        <article class="card">
+          <div class="table-wrap">
+            <table class="table" id="sessions-table">
+              <thead><tr><th>会话</th><th>请求</th><th>输入</th><th>输出</th><th>能耗</th><th>碳排</th><th>电费</th><th>省 API</th><th>最后活动</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- 硬件 -->
+      <section class="page" data-page="hardware" hidden>
+        <div class="page-head">
+          <h1>硬件监测</h1>
+          <p class="page-sub">NVIDIA GPU 为主（nvidia-smi 全量遥测：显存 / 使用率 / 温度 / 功耗）；核显等其它适配器仅作扩展监测</p>
+        </div>
+        <article class="card">
+          <div class="card-head"><h2>GPU</h2><span class="card-note" id="gpu-note">—</span></div>
+          <div id="hardware-rings" class="gpu-list"></div>
+        </article>
+        <article class="card" id="igpu-card" hidden>
+          <div class="card-head">
+            <h2>集成显卡 <span class="tag">扩展</span></h2>
+            <span class="card-note" id="igpu-note">—</span>
+          </div>
+          <div class="ring-grid" id="igpu-rings"></div>
+          <p class="method-note">核显走 Windows GPU 计数器，仅能给出使用率，没有显存/温度/功耗；不参与 green-meter 的能耗标定。</p>
+        </article>
+        <div class="card-row">
+          <article class="card">
+            <div class="card-head"><h2>CPU 使用率</h2><span class="card-note" id="hw-cpu-note">—</span></div>
+            <div class="chart" id="cpu-spark"></div>
+          </article>
+          <article class="card">
+            <div class="card-head"><h2>内存占用</h2><span class="card-note" id="hw-mem-note">—</span></div>
+            <div class="chart" id="mem-spark"></div>
+          </article>
+        </div>
+        <article class="card" id="gpu-spark-card">
+          <div class="card-head"><h2>GPU 使用率</h2><span class="card-note" id="hw-gpu-note">—</span></div>
+          <div class="chart" id="gpu-spark"></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>设备信息</h2></div>
+          <dl class="kv" id="device-info"></dl>
+        </article>
+      </section>
+
+      <!-- 预警 -->
+      <section class="page" data-page="alerts" hidden>
+        <div class="page-head">
+          <h1>预警</h1>
+          <p class="page-sub">阈值与异常检测：超支、空转、上下文重读、单步能耗离群</p>
+        </div>
+        <div class="stat-grid stat-grid-3" id="alert-cards"></div>
+        <article class="card">
+          <div class="card-head">
+            <h2>当前预警</h2>
+            <div class="btn-row">
+              <button class="btn" id="clear-alerts">清空历史</button>
+            </div>
+          </div>
+          <div id="alert-list"></div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>预警规则</h2><span class="card-note">0 = 关闭该规则</span></div>
+          <div class="form-grid">
+            <label class="field"><span>单会话能耗上限（kJ）</span><input id="rule-session-energy" type="number" step="1" min="0" /></label>
+            <label class="field"><span>单会话费用上限（元）</span><input id="rule-session-cost" type="number" step="0.1" min="0" /></label>
+            <label class="field"><span>近 1 小时费用上限（元）</span><input id="rule-hourly-cost" type="number" step="0.1" min="0" /></label>
+            <label class="field"><span>近 24 小时费用上限（元）</span><input id="rule-daily-cost" type="number" step="0.1" min="0" /></label>
+            <label class="field"><span>单步能耗离群 z 阈值</span><input id="rule-step-z" type="number" step="0.1" min="0" /></label>
+            <label class="field"><span>上下文重读比阈值（输入:输出）</span><input id="rule-thrash" type="number" step="1" min="0" /></label>
+            <label class="field"><span>空转连续步数</span><input id="rule-retry" type="number" step="1" min="0" /></label>
+            <label class="field"><span>缓存命中率下限（%）</span><input id="rule-cache" type="number" step="1" min="0" max="100" /></label>
+          </div>
+          <div class="btn-row btn-row-end">
+            <span class="save-hint" id="rules-hint"></span>
+            <button class="btn btn-primary" id="save-rules">保存规则</button>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>预警历史</h2><span class="card-note" id="alert-history-note">—</span></div>
+          <div class="table-wrap table-tall">
+            <table class="table" id="alert-history-table">
+              <thead><tr><th>时间</th><th>级别</th><th>规则</th><th>说明</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- 数据源 -->
+      <section class="page" data-page="sources" hidden>
+        <div class="page-head">
+          <h1>数据源</h1>
+          <p class="page-sub">本机台账 + 中转站（自有网关或 OpenRouter 等）：两条来源分开统计，避免口径混淆</p>
+        </div>
+        <article class="card">
+          <div class="card-head">
+            <h2>中转站连接</h2>
+            <div class="btn-row">
+              <button class="btn" id="relay-refresh">立即刷新</button>
+              <button class="btn btn-primary" id="save-relay">保存</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <label class="field">
+              <span>启用中转站数据源</span>
+              <select id="relay-enabled"><option value="false">关闭</option><option value="true">开启</option></select>
+            </label>
+            <label class="field">
+              <span>适配器</span>
+              <select id="relay-adapter">
+                <option value="openrouter">OpenRouter（/api/v1/activity）</option>
+                <option value="generic">通用 JSON（自有中转站）</option>
+              </select>
+            </label>
+            <label class="field"><span>地址</span><input id="relay-url" type="text" /></label>
+            <label class="field"><span>API Key（可选）</span><input id="relay-key" type="password" /></label>
+            <label class="field"><span>轮询间隔（毫秒）</span><input id="relay-poll" type="number" step="60000" min="60000" /></label>
+            <label class="field"><span>USD → CNY 汇率</span><input id="usd-cny" type="number" step="0.01" min="0" /></label>
+          </div>
+          <details class="generic-fields">
+            <summary>通用适配器字段映射（仅 generic 适配器使用）</summary>
+            <div class="form-grid">
+              <label class="field"><span>日期</span><input id="relay-f-date" type="text" /></label>
+              <label class="field"><span>模型</span><input id="relay-f-model" type="text" /></label>
+              <label class="field"><span>供应商</span><input id="relay-f-provider" type="text" /></label>
+              <label class="field"><span>请求数</span><input id="relay-f-requests" type="text" /></label>
+              <label class="field"><span>输入 token</span><input id="relay-f-in" type="text" /></label>
+              <label class="field"><span>输出 token</span><input id="relay-f-out" type="text" /></label>
+              <label class="field"><span>思考 token</span><input id="relay-f-reasoning" type="text" /></label>
+              <label class="field"><span>费用（USD）</span><input id="relay-f-cost" type="text" /></label>
+            </div>
+          </details>
+          <p class="method-note" id="relay-status">—</p>
+        </article>
+        <div class="stat-grid" id="relay-stats"></div>
+        <article class="card">
+          <div class="card-head"><h2>按模型</h2><span class="card-note" id="relay-model-note">—</span></div>
+          <div class="table-wrap">
+            <table class="table" id="relay-model-table">
+              <thead><tr><th>模型</th><th>供应商</th><th>请求</th><th>输入</th><th>输出</th><th>思考</th><th>花费</th><th>≈能耗</th><th>≈碳排</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>按天</h2></div>
+          <div class="chart" id="relay-day-chart"></div>
+        </article>
+      </section>
+
+      <!-- 参考数据 -->
+      <section class="page" data-page="reference" hidden>
+        <div class="page-head">
+          <h1>参考数据</h1>
+          <p class="page-sub">每个系数都标注来源与年份：本机实测 &gt; 实验实测 &gt; 公开披露</p>
+        </div>
+        <article class="card">
+          <div class="card-head">
+            <h2>本机实测标定</h2>
+            <span class="card-note" id="calib-note">—</span>
+          </div>
+          <div class="calib-box" id="calib-box"></div>
+          <div class="form-grid">
+            <label class="field"><span>标定名称</span><input id="calib-label" type="text" placeholder="例如：5090 + Qwen3.6-35B" /></label>
+            <label class="field"><span>模型标注</span><input id="calib-model" type="text" placeholder="模型名 / 版本" /></label>
+          </div>
+          <div class="btn-row btn-row-end">
+            <span class="save-hint" id="calib-hint"></span>
+            <button class="btn btn-primary" id="calib-toggle">开始标定</button>
+          </div>
+          <p class="method-note">
+            标定方式：用 nvidia-smi 以 1 Hz 采样全部 GPU 功耗，扣除空闲基线后对时间积分得到真实能耗，
+            再除以同一窗口内台账记录的 token 数，得到本机该模型组合的 J/token 与 g CO₂e/token。
+          </p>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>实测档案（本机）</h2><span class="card-note" id="measured-note">—</span></div>
+          <div class="table-wrap">
+            <table class="table" id="measured-table">
+              <thead><tr><th>名称</th><th>GPU</th><th>时长</th><th>能耗</th><th>token</th><th>J/token</th><th>g/token</th><th>时间</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>电网碳强度</h2><span class="card-note">用于把能耗换算为碳排</span></div>
+          <div class="table-wrap">
+            <table class="table" id="grid-table">
+              <thead><tr><th>地区</th><th>口径</th><th>kg CO₂e/kWh</th><th>年份</th><th>来源</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>云端 token→能耗 公开系数</h2><span class="card-note">云端路径唯一的估算依据</span></div>
+          <div class="table-wrap">
+            <table class="table" id="cloud-ref-table">
+              <thead><tr><th>参考</th><th>口径</th><th>系数</th><th>年份</th><th>来源</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="method-note">
+            云端只能看到 token，因此能耗必须来自公开拟合；本地标定（H20/3090 拟合）只用于本地路径的兜底估算，
+            不参与云端换算。两个模型量级互相印证：0.0006 Wh × 500 输出 token ≈ 0.3 Wh/查询 ≈ Google 披露的 0.24 Wh/请求。
+          </p>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>本地标定档案（green-meter 实测拟合）</h2><span class="card-note">无 GPU 实测时的兜底估算</span></div>
+          <div class="table-wrap">
+            <table class="table" id="lab-table">
+              <thead><tr><th>配置</th><th>a（J/token prefill）</th><th>b</th><th>c</th><th>样本</th><th>R²</th><th>中位误差</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- 台账 -->
+      <section class="page" data-page="ledger" hidden>
+        <div class="page-head">
+          <h1>碳台账</h1>
+          <p class="page-sub">green-meter 每步一行 JSONL，是控制台所有数字的唯一来源</p>
+        </div>
+        <article class="card">
+          <div class="card-head">
+            <h2>台账文件</h2>
+            <div class="btn-row">
+              <button class="btn" id="open-ledger-dir">打开目录</button>
+              <button class="btn" id="export-csv">导出 CSV</button>
+            </div>
+          </div>
+          <dl class="kv" id="ledger-info"></dl>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>最近记录</h2><span class="card-note" id="ledger-note">—</span></div>
+          <div class="table-wrap table-tall">
+            <table class="table" id="ledger-table">
+              <thead><tr><th>时间</th><th>会话</th><th>轮/步</th><th>输入</th><th>缓存</th><th>输出</th><th>思考</th><th>能耗</th><th>碳排</th><th>实测能耗</th><th>档案</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- 日志 -->
+      <section class="page" data-page="logs" hidden>
+        <div class="page-head">
+          <h1>日志</h1>
+          <p class="page-sub">DSH harness 进程输出（dsh.log）</p>
+        </div>
+        <article class="card">
+          <div class="card-head">
+            <h2>最近输出</h2>
+            <div class="btn-row">
+              <button class="btn" id="open-log-dir">打开日志目录</button>
+              <button class="btn" id="refresh-log">刷新</button>
+            </div>
+          </div>
+          <pre class="log" id="log-view">—</pre>
+        </article>
+      </section>
+
+      <!-- 设置 -->
+      <section class="page" data-page="settings" hidden>
+        <div class="page-head">
+          <h1>设置</h1>
+          <p class="page-sub">保存后写入 <code>dsh-home/cordis.patch.yml</code>，对话内的碳排仪表盘同步生效</p>
+        </div>
+        <article class="card">
+          <div class="card-head"><h2>碳排与费用基线</h2></div>
+          <div class="form-grid">
+            <label class="field">
+              <span>标定档案（green-meter profile）</span>
+              <select id="set-profile"></select>
+            </label>
+            <label class="field">
+              <span>本地电网预设（参考数据）</span>
+              <select id="set-local-preset"></select>
+            </label>
+            <label class="field">
+              <span>云端电网预设（参考数据）</span>
+              <select id="set-cloud-preset"></select>
+            </label>
+            <label class="field">
+              <span>云端 token→能耗模型（公开系数）</span>
+              <select id="set-cloud-model"></select>
+            </label>
+            <label class="field">
+              <span>数据中心 PUE（per-token 模型用）</span>
+              <input id="set-cloud-pue" type="number" step="0.05" min="1" />
+            </label>
+            <label class="field">
+              <span>云端碳排估算</span>
+              <select id="set-cloud-enabled"><option value="true">开启</option><option value="false">关闭</option></select>
+            </label>
+            <label class="field">
+              <span>本地电网碳强度（kg CO₂e / kWh）</span>
+              <input id="set-local-factor" type="number" step="0.0001" min="0" />
+            </label>
+            <label class="field">
+              <span>云端电网碳强度（kg CO₂e / kWh）</span>
+              <input id="set-cloud-factor" type="number" step="0.0001" min="0" />
+            </label>
+            <label class="field">
+              <span>电价（元 / kWh）</span>
+              <input id="set-price" type="number" step="0.01" min="0" />
+            </label>
+            <label class="field">
+              <span>API 输入价（元 / 百万 token）</span>
+              <input id="set-api-in" type="number" step="0.01" min="0" />
+            </label>
+            <label class="field">
+              <span>API 缓存价（元 / 百万 token）</span>
+              <input id="set-api-cached" type="number" step="0.01" min="0" />
+            </label>
+            <label class="field">
+              <span>API 输出价（元 / 百万 token）</span>
+              <input id="set-api-out" type="number" step="0.01" min="0" />
+            </label>
+            <label class="field">
+              <span>对话内仪表盘刷新间隔（毫秒）</span>
+              <input id="set-refresh" type="number" step="1000" min="1000" />
+            </label>
+          </div>
+          <div class="btn-row btn-row-end">
+            <span class="save-hint" id="save-hint"></span>
+            <button class="btn btn-primary" id="save-settings">保存设置</button>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>目录</h2></div>
+          <div class="btn-row">
+            <button class="btn" id="open-home">打开 DSH_HOME</button>
+            <button class="btn" id="open-ledger-dir-2">打开台账目录</button>
+          </div>
+          <dl class="kv" id="path-info"></dl>
+        </article>
+        <article class="card">
+          <div class="card-head"><h2>方法边界</h2></div>
+          <p class="method-note">
+            能耗/碳排为 <b>token-profile 估算</b>：green-meter 用标定系数从 token 用量推算 GPU 运行能耗，
+            再乘以电网碳强度换算碳排，<b>不是硬件实测</b>（实测需 vLLM green-meter 插件）。<br />
+            「已省 API 费用」= 同量 token 的云端 API 计价 − 本地电费估算；「已省碳排」= 相同能耗按云端电网
+            碳强度折算 − 本地碳排。请按实际服务价格与本地电源结构配置上面的基线。
+          </p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="console.js"></script>
+</body>
+</html>
